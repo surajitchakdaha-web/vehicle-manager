@@ -1,0 +1,21 @@
+{
+  "name": "Vehicle Manager",
+  "short_name": "VehicleMgr",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1b5e20",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "FuelTracker.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "maa.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
