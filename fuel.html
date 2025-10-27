@@ -1,0 +1,208 @@
+﻿<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vehicle Manager — Fuel Entry</title>
+<style>
+  :root{
+    --bg1:#004d00;  /* deep green */
+    --bg2:#800000;  /* deep red */
+    --card:#fff8dc; /* light yellow */
+  }
+
+  *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',sans-serif}
+
+  body{
+    margin:0;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+  }
+
+  .card{
+    width:100%;
+    max-width:580px;
+    background:var(--card);
+    border-radius:20px;
+    padding:24px;
+    box-shadow:0 12px 35px rgba(0,0,0,0.25);
+    border:1px solid #e0d5a2;
+  }
+
+  .logo{
+    display:block;
+    margin:0 auto 10px auto;
+    width:120px;
+    height:120px;
+    border-radius:10px;
+    object-fit:contain;
+    background:#fff8dc;
+    padding:4px;
+    box-shadow:0 6px 18px rgba(0,0,0,0.3);
+  }
+
+  h1{
+    text-align:center;
+    color:#0b2545;
+    margin:0 0 10px 0;
+  }
+
+  label{
+    display:block;
+    margin-top:10px;
+    font-weight:600;
+    color:#2c2c2c;
+  }
+
+  input[type="text"], input[type="number"], input[type="date"]{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:1px solid #a6c9b9;
+    margin-top:6px;
+    background:linear-gradient(90deg,#eaf5ff,#e8ffe8);
+  }
+
+  /* 🔸 Add Entry Button Special Color */
+  .btn.add{
+    width:100%;
+    margin-top:14px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    background:linear-gradient(90deg,#ff9966,#ff5e62);
+    color:#fff;
+    transition:0.25s;
+    box-shadow:0 4px 12px rgba(255,94,98,0.4);
+  }
+  .btn.add:hover{filter:brightness(1.1)}
+
+  table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+    font-size:0.9rem;
+  }
+
+  th, td{
+    padding:10px;
+    text-align:center;
+    border:1px solid #ddd;
+  }
+
+  th{
+    background-color:#f4a9b8; /* light pink header */
+    color:#fff;
+  }
+
+  tr:nth-child(even){background-color:#eaf5ff;} /* sky blue */
+  tr:nth-child(odd){background-color:#ffeaf3;}  /* light pink */
+
+  .btn.back{
+    width:100%;
+    margin-top:16px;
+    padding:10px;
+    border:none;
+    border-radius:10px;
+    font-weight:700;
+    cursor:pointer;
+    background:linear-gradient(90deg,#6ca0dc,#a2f2a2);
+    color:#00264d;
+    transition:0.25s;
+  }
+  .btn.back:hover{filter:brightness(1.1)}
+</style>
+</head>
+<body>
+  <div class="card">
+    <img src="FuelTracker.png" alt="Fuel Tracker Logo" class="logo">
+    <h1>⛽ Fuel Entry</h1>
+
+    <label>Date</label>
+    <input type="date" id="date">
+
+    <label>Fuel/Liters (₹) আজকে তেলের দাম কতো ?</label>
+    <input type="number" id="liters" placeholder="₹ 105.19">
+
+    <label>Amount (₹) কতো টাকার তেল ভরছেন?</label>
+    <input type="number" id="amount" placeholder="₹ 251.00">
+
+    <label>Odometer (km) (আপনার কতো কিলোমিটার রিডিং আছে?)</label>
+    <input type="number" id="odo" placeholder="e.g. 45800">
+
+    <!-- 🔸 Updated Add Entry Button -->
+    <button class="btn add" onclick="addEntry()">➕ Add Entry</button>
+
+    <table id="fuelTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Liters</th>
+          <th>Amount</th>
+          <th>Odometer</th>
+          <th>Mileage (km/L)</th> <!-- ✅ নতুন কলাম -->
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button class="btn back" onclick="go('index.html')">🏠 Back to Home</button>
+  </div>
+
+<script>
+  const KEY_FUEL = 'fuel_entries_v1';
+
+  // ✅ পেজ লোডের সময় আজকের তারিখ দেখাবে
+  document.addEventListener("DOMContentLoaded", () => {
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("date").value = today;
+  });
+
+  function loadEntries(){
+    const arr = JSON.parse(localStorage.getItem(KEY_FUEL) || '[]');
+    const tbody = document.querySelector('#fuelTable tbody');
+    tbody.innerHTML = '';
+    arr.forEach((row, i)=>{
+      let mileage = '-';
+      if(i > 0){
+        const prev = arr[i-1];
+        const dist = row.odo - prev.odo;
+        const fuel = row.liters;
+        mileage = fuel > 0 ? (dist / fuel).toFixed(2) : '-';
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${row.date}</td><td>${row.liters}</td><td>${row.amount}</td><td>${row.odo}</td><td>${mileage}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function addEntry(){
+    const date = document.getElementById('date').value;
+    const liters = parseFloat(document.getElementById('liters').value);
+    const amount = parseFloat(document.getElementById('amount').value);
+    const odo = parseFloat(document.getElementById('odo').value);
+
+    if(!date || isNaN(liters) || isNaN(amount) || isNaN(odo)){
+      alert("দয়া করে সব ঘর পূরণ করুন!");
+      return;
+    }
+
+    const arr = JSON.parse(localStorage.getItem(KEY_FUEL) || '[]');
+    arr.push({date, liters, amount, odo});
+    localStorage.setItem(KEY_FUEL, JSON.stringify(arr));
+    loadEntries();
+    alert("নতুন তথ্য যুক্ত হয়েছে!");
+  }
+
+  function go(page){ location.href = page; }
+
+  loadEntries();
+</script>
+</body>
+</html>

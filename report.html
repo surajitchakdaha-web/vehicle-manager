@@ -1,0 +1,179 @@
+﻿<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Fuel Tracker — Report</title>
+<style>
+  :root{
+    --bg1:#ffe0b2;
+    --bg2:#f3e5f5;
+    --card:#fff8e1;
+    --accent1:#fb8c00;
+    --accent2:#8e24aa;
+    --text:#4a2f23;
+  }
+
+  *{box-sizing:border-box;font-family:"Noto Sans Bengali",Inter,system-ui,Segoe UI,Roboto,sans-serif;}
+
+  body{
+    margin:0;padding:18px;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2));
+    min-height:100vh;
+    display:flex;justify-content:center;
+    animation:fadeIn 1.2s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+
+  .wrap{width:100%;max-width:720px;text-align:center;}
+
+  .logo{
+    width:110px;height:110px;display:block;margin:0 auto 6px;
+    object-fit:contain;border-radius:12px;animation:zoomIn 1.2s ease;
+  }
+  @keyframes zoomIn{0%{transform:scale(0.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
+
+  .carName{
+    text-align:center;font-weight:700;color:var(--text);
+    margin:10px 0 20px;font-size:1.15rem;
+  }
+
+  .section{
+    background:var(--card);border-radius:16px;padding:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.12);margin-bottom:24px;text-align:center;
+  }
+
+  h1{color:var(--accent1);margin:8px 0;}
+  h2{color:var(--accent2);margin:8px 0;}
+
+  table{
+    width:100%;border-collapse:collapse;margin-top:10px;font-size:0.92rem;
+  }
+  th,td{
+    border:1px solid #e0cfa3;padding:8px;text-align:center;
+  }
+  th{background:#ffe0b2;}
+  tr:nth-child(even){background:#fffaf0;}
+
+  .btn{
+    padding:10px 14px;border:none;border-radius:10px;font-weight:700;
+    cursor:pointer;margin:6px;transition:0.25s;color:#fff;
+  }
+  .btn.export{background:linear-gradient(90deg,#81c784,#4caf50);}
+  .btn.print{background:linear-gradient(90deg,#ffb74d,#fb8c00);}
+  .btn.back{background:linear-gradient(90deg,#64b5f6,#42a5f5);}
+  .btn:hover{filter:brightness(1.1);}
+  .controls{text-align:center;margin-top:10px;}
+
+  /* ✅ Print Setup */
+  @media print{
+    @page{size:A4 portrait;margin:1.5cm;}
+    body{background:#fff;}
+    .btn,.controls{display:none !important;}
+    .section{box-shadow:none;border:none;}
+    .wrap{max-width:100%;width:100%;}
+    th,td{border:1px solid #999;}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <img src="FuelTracker.png" alt="FuelTracker Logo" class="logo">
+    <div class="carName" id="carNameDisplay"></div>
+
+    <!-- Fuel Report -->
+    <div class="section">
+      <h1>⛽ Fuel Report</h1>
+      <table id="fuelTbl">
+        <thead><tr><th>Date</th><th>Liters</th><th>Amount</th><th>Odo</th><th>Dist</th><th>Mileage</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Service Report -->
+    <div class="section">
+      <h2>🔧 Servicing Report</h2>
+      <table id="srvTbl">
+        <thead><tr><th>Date</th><th>Garage</th><th>Amount</th><th>Details</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="controls">
+      <button class="btn export" onclick="exportCSV()">📁 Export CSV</button>
+      <button class="btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
+      <button class="btn back" onclick="location.href='index.html'">← Back to Home</button>
+    </div>
+  </div>
+
+<script>
+  const FKEY='fuel_entries_v1';
+  const SKEY='vm_service_v1';
+  const MKEY='vm_meta_v1';
+
+  function toDisplay(iso){
+    if(!iso)return'—';
+    const d=new Date(iso);
+    return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
+  }
+
+  function loadFuel(){
+    const data=JSON.parse(localStorage.getItem(FKEY)||'[]');
+    const tbody=document.querySelector('#fuelTbl tbody');
+    tbody.innerHTML='';
+    if(data.length<1)return;
+    for(let i=0;i<data.length;i++){
+      const e=data[i];
+      const prev=i>0?data[i-1]:null;
+      const dval=prev?e.odo-prev.odo:0;
+      const mil=(dval>0&&e.liters>0)?(dval/e.liters).toFixed(2):'—';
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${toDisplay(e.date)}</td><td>${e.liters}</td><td>₹${e.amount}</td><td>${e.odo}</td><td>${dval||'—'}</td><td>${mil}</td>`;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function loadService(){
+    const data=JSON.parse(localStorage.getItem(SKEY)||'[]');
+    const tbody=document.querySelector('#srvTbl tbody');
+    tbody.innerHTML='';
+    data.forEach(e=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${toDisplay(e.date)}</td><td>${e.place||'—'}</td><td>₹${e.cost||'—'}</td><td>${e.note||'—'}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function exportCSV(){
+    let csv='Fuel Report\nDate,Liters,Amount,Odo,Dist,Mileage\n';
+    const fuel=JSON.parse(localStorage.getItem(FKEY)||'[]');
+    for(let i=1;i<fuel.length;i++){
+      const a=fuel[i-1],b=fuel[i];
+      const dist=(b.odo-a.odo).toFixed(2);
+      const mil=(b.liters>0?(dist/b.liters).toFixed(2):'0.00');
+      csv+=`${toDisplay(b.date)},${b.liters},${b.amount},${b.odo},${dist},${mil}\n`;
+    }
+    csv+='\nService Report\nDate,Garage,Amount,Details\n';
+    const srv=JSON.parse(localStorage.getItem(SKEY)||'[]');
+    srv.forEach(s=>{
+      csv+=`${toDisplay(s.date)},${s.place||''},${s.cost||''},${s.note||''}\n`;
+    });
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download='vehicle_report.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function showCarName(){
+    const meta=JSON.parse(localStorage.getItem(MKEY)||'{}');
+    document.getElementById('carNameDisplay').textContent=meta.carName?`🚗 ${meta.carName}`:'🚗 Vehicle Report';
+  }
+
+  loadFuel();
+  loadService();
+  showCarName();
+</script>
+</body>
+</html>
