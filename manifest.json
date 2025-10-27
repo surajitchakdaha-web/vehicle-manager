@@ -1,10 +1,10 @@
-{
+﻿{
   "name": "Vehicle Manager",
   "short_name": "VehicleMgr",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1b5e20",
+  "background_color": "#fff8e1",
+  "theme_color": "#ff7043",
   "orientation": "portrait",
   "icons": [
     {
