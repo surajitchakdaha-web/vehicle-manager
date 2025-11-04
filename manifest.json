@@ -1,11 +1,13 @@
 {
   "name": "Vehicle Manager",
   "short_name": "VehicleMgr",
+  "id": "/vehicle-manager/",
+  "scope": "/vehicle-manager/",
   "description": "Track and manage your vehicles, fuel, and expenses easily.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffcc00",
+  "background_color": "#fff8e1",
+  "theme_color": "#ff7043",
   "orientation": "portrait",
   "icons": [
     {
@@ -30,6 +32,16 @@
     },
     {
       "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "FuelTracker.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "maa.png",
       "sizes": "512x512",
       "type": "image/png"
     }
