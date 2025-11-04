@@ -1,5 +1,5 @@
-﻿<!doctype html>
-<html lang="bn">
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -9,6 +9,7 @@
     --bg1:#b71c1c; /* deep red */
     --bg2:#ffeb3b; /* warm yellow */
     --card:#fff3e0; /* soft cream */
+    --accent4:#1976d2;
   }
 
   * {box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',sans-serif;}
@@ -34,7 +35,7 @@
 
   .logo {
     display:block;
-    margin:0 auto 12px auto;
+    margin:0 auto 8px auto;
     width:100px;
     height:100px;
     border-radius:10px;
@@ -48,7 +49,25 @@
     text-align:center;
     color:#4a0d0d;
     font-size:1.4rem;
+    margin:0 0 8px 0;
+  }
+
+  .car-name {
+    text-align:center;
+    color: var(--accent4);
+    font-weight:700;
+    font-size:1.1rem;
     margin:0 0 16px 0;
+    background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+    padding:6px 12px;
+    border-radius:20px;
+    display:inline-block;
+    border:2px solid #64b5f6;
+  }
+
+  .header-container {
+    text-align:center;
+    margin-bottom:16px;
   }
 
   .doc-box {
@@ -138,18 +157,21 @@
 <body>
   <div class="card">
     <img src="FuelTracker.png" class="logo" alt="FuelTracker Logo">
-    <h1>📁 Documents</h1>
+    
+    <div class="header-container">
+      <h1>📁 Documents</h1>
+      <div class="car-name" id="carNameDisplay">🚗 Loading vehicle...</div>
+    </div>
 
-<h4 style="text-align:center; line-height:1.6; color:#4a0d0d; font-weight:500;">
-  আপনি ইচ্ছা করলে এখানে গাড়ির প্রয়োজনীয় নথি রাখতে পারেন।<br>
-  যেগুলি অফলাইনে শুধুমাত্র আপনিই দেখতে পারবেন।<br>
-  <b><u>**-এগুলি সরকারী স্বীকৃত নয়।-**</u></b>
-</h4>
-
+    <h4 style="text-align:center; line-height:1.6; color:#4a0d0d; font-weight:500;">
+      You can store your vehicle's important documents here.<br>
+      These will be available offline and only you can view them.<br>
+      <b><u>**These are not government approved documents.**</u></b>
+    </h4>
 
     <div id="docsList"></div>
 
-    <button class="back" onclick="go('index.html')">← Back to Home</button>
+    <button class="back" onclick="goBack()">← Back to Vehicle Details</button>
     <p class="tip">📸 Use phone camera or gallery to upload. Files are stored locally.</p>
   </div>
 
@@ -166,8 +188,54 @@
     {title:'RC / Other'}
   ];
 
+  let currentVehicle = null;
+
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get current vehicle data - try multiple storage locations
+    currentVehicle = JSON.parse(localStorage.getItem('currentVehicle') || '{}');
+    
+    // If no vehicle found in currentVehicle, try to get from vehicles list
+    if (!currentVehicle || !currentVehicle.id) {
+      const vehicles = JSON.parse(localStorage.getItem('fuelTracker_vehicles') || '[]');
+      const currentVehicleId = localStorage.getItem('currentVehicleId');
+      if (currentVehicleId && vehicles.length > 0) {
+        currentVehicle = vehicles.find(v => v.id == currentVehicleId) || {};
+      }
+    }
+    
+    showCarName();
+    loadDocs();
+  });
+
+  function showCarName() {
+    const carNameDisplay = document.getElementById('carNameDisplay');
+    
+    if (currentVehicle && currentVehicle.type && currentVehicle.model) {
+      let vehicleName = `${currentVehicle.type}: ${currentVehicle.model}`;
+      if (currentVehicle.number && currentVehicle.number.trim() !== '') {
+        vehicleName += ` (${currentVehicle.number})`;
+      }
+      carNameDisplay.textContent = `🚗 ${vehicleName}`;
+      carNameDisplay.style.background = 'linear-gradient(135deg,#e3f2fd,#bbdefb)';
+      carNameDisplay.style.borderColor = '#64b5f6';
+      
+      // Update page title with vehicle info
+      document.title = `Documents - ${currentVehicle.type}: ${currentVehicle.model}`;
+    } else {
+      carNameDisplay.textContent = '🚗 No Vehicle Selected';
+      carNameDisplay.style.background = 'linear-gradient(135deg,#ffcdd2,#ef9a9a)';
+      carNameDisplay.style.borderColor = '#f44336';
+      document.title = 'Documents - No Vehicle Selected';
+    }
+  }
+
   function loadDocs(){
-    const stored = JSON.parse(localStorage.getItem(KEY_DOCS) || '[]');
+    // Use vehicle-specific storage key
+    const vehicleKey = currentVehicle && currentVehicle.id ? 
+        KEY_DOCS + '_' + currentVehicle.id : KEY_DOCS;
+        
+    const stored = JSON.parse(localStorage.getItem(vehicleKey) || '[]');
     const docs = stored.length ? stored : defaultDocs;
     const container = document.getElementById('docsList');
     container.innerHTML = '';
@@ -230,10 +298,14 @@
       if(!file) return;
       const reader = new FileReader();
       reader.onload = ()=>{
-        const arr = JSON.parse(localStorage.getItem(KEY_DOCS) || '[]');
+        // Use vehicle-specific storage key
+        const vehicleKey = currentVehicle && currentVehicle.id ? 
+            KEY_DOCS + '_' + currentVehicle.id : KEY_DOCS;
+            
+        const arr = JSON.parse(localStorage.getItem(vehicleKey) || '[]');
         const docs = arr.length ? arr : defaultDocs;
         docs[index].data = reader.result;
-        localStorage.setItem(KEY_DOCS, JSON.stringify(docs));
+        localStorage.setItem(vehicleKey, JSON.stringify(docs));
         loadDocs();
       };
       reader.readAsDataURL(file);
@@ -241,7 +313,10 @@
     input.click();
   }
 
-  function go(page){ location.href = page; }
+  function goBack() { 
+    // Navigate back to vehicle details page
+    window.location.href = 'vehicle.html';
+  }
 
   loadDocs();
 </script>
