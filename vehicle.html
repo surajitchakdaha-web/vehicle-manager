@@ -1,0 +1,553 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <!-- ✅ Google Analytics Tracking Code -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-7R5JZ3ESV2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-7R5JZ3ESV2');
+  </script>
+  <!-- ✅ End of Google Analytics -->
+
+  <link rel="manifest" href="manifest.json">
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Fuel Tracker — Vehicle Details</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{
+      --bg1:#f5e0c3;
+      --bg2:#ffe0b2;
+      --card:#fff3e0;
+      --accent:#ff7043;
+      --text:#4a2f23;
+      --primary:#3498db;
+      --secondary:#2ecc71;
+      --warning:#f39c12;
+      --danger:#e74c3c;
+    }
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',sans-serif;}
+
+    body{
+      margin:0;
+      background:linear-gradient(135deg,var(--bg1),var(--bg2));
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+
+    .card{
+      width:100%;
+      max-width:480px;
+      background:var(--card);
+      border-radius:20px;
+      padding:24px;
+      box-shadow:0 12px 30px rgba(0,0,0,0.15);
+      text-align:center;
+      position:relative;
+    }
+
+    .logo{
+      width:100px;height:100px;border-radius:12px;
+      display:block;margin:0 auto 12px auto;
+      object-fit:contain;
+      box-shadow:0 6px 18px rgba(0,0,0,0.3);
+    }
+
+    h1{color:var(--accent);margin:8px 0 10px 0;}
+    p.info{
+      color:var(--text);
+      text-align:center;
+      font-size:1rem;
+      margin:10px 0 18px 0;
+      line-height:1.5;
+    }
+
+    .vehicle-details-container {
+      background: #e8f5e9; /* Light green background */
+      border-radius: 15px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      text-align: left;
+      border: 2px solid #c8e6c9; /* Light green border */
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #c8e6c9;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .detail-value {
+      color: #2e7d32; /* Dark green for values */
+      font-weight: 500;
+    }
+
+    .btn{
+      border:none;border-radius:10px;
+      padding:12px 16px;font-weight:700;
+      cursor:pointer;transition:0.3s;color:#fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn.fuel{
+      background:linear-gradient(90deg,var(--accent),#ff9800);
+      font-size:1.2rem;width:100%;
+      margin-bottom:18px;box-shadow:0 4px 12px rgba(255,112,67,0.4);
+    }
+
+    .btn.back{
+      background:linear-gradient(90deg,var(--primary),var(--secondary));
+      font-size:1rem;
+      margin-bottom:15px;
+    }
+
+    .btn.edit{
+      background:linear-gradient(90deg,var(--warning),#e67e22);
+      font-size:0.9rem;
+    }
+
+    .btn.delete{
+      background:linear-gradient(90deg,var(--danger),#c0392b);
+      font-size:0.9rem;
+    }
+
+    .btn.docs{background:linear-gradient(90deg,#4caf50,#81c784);}
+    .btn.reports{background:linear-gradient(90deg,#42a5f5,#64b5f6);}
+    .btn.service{background:linear-gradient(90deg,#ba68c8,#8e24aa);}
+    .btn.gov{background:linear-gradient(90deg,#ffb74d,#ff9800);}
+    .btn.toll{background:linear-gradient(90deg,#ef5350,#e53935);}
+    .btn:hover{filter:brightness(1.1);transform:translateY(-2px);}
+
+    .row{display:flex;gap:8px;margin-top:16px;justify-content:center;flex-wrap:wrap;}
+    .credit{text-align:center;margin-top:16px;font-weight:600;color:#4b2e05;}
+    .credit small{display:block;margin-top:3px;}
+    .heart{font-size:1.2rem;color:#e53935;cursor:pointer;margin-top:8px;transition:0.3s;}
+    .heart:hover{transform:scale(1.3);}
+
+    .reminder{
+      background:#fff8e1;
+      border-radius:10px;
+      padding:15px;
+      font-size:0.95rem;
+      color:#4e342e;
+      margin:15px 0;
+      text-align: left;
+    }
+
+    .reminder h3 {
+      margin: 0 0 10px 0;
+      color: var(--accent);
+      text-align: center;
+    }
+
+    .reminder-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #ffecb3;
+    }
+
+    .reminder-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Modal Styles */
+    #vehicleModal{
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.6);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;visibility:hidden;
+      transition:opacity 0.4s ease;
+      z-index:1000;
+    }
+    #vehicleModal.active{opacity:1;visibility:visible;}
+    .modal-content{
+      background:var(--card);
+      border-radius:16px;
+      padding:20px 24px;
+      width:90%;
+      max-width:400px;
+      box-shadow:0 8px 25px rgba(0,0,0,0.2);
+      animation:popIn 0.5s ease;
+    }
+    .modal-content h2{color:var(--accent);margin-top:0;}
+
+    #thanksBox{
+      position:fixed;top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.6);
+      display:flex;align-items:center;justify-content:center;
+      opacity:0;visibility:hidden;
+      transition:opacity 0.4s ease;
+      z-index:1000;
+    }
+    #thanksBox.active{opacity:1;visibility:visible;}
+    .thanksMsg{
+      background:#fff8e1;
+      border-radius:16px;
+      padding:20px 24px;
+      text-align:center;
+      box-shadow:0 8px 25px rgba(0,0,0,0.2);
+      animation:popIn 0.5s ease;
+    }
+    .thanksMsg p{color:#4e342e;font-size:1rem;font-weight:600;}
+    .btn.upi{background:linear-gradient(90deg,#7e57c2,#5e35b1);color:#fff;border:none;border-radius:10px;padding:8px 16px;margin-top:10px;font-weight:700;cursor:pointer;}
+    @keyframes popIn{from{transform:scale(0.8);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+    #fadeLogo{
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      background:linear-gradient(135deg,#fff3e0,#ffe0b2);
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;
+      opacity:0;visibility:hidden;
+      transition:opacity 0.4s ease;
+      z-index:2000;
+    }
+    #fadeLogo.active{opacity:1;visibility:visible;animation:fadeOut 0.8s ease 0.5s forwards;}
+    #fadeLogo img{width:130px;height:130px;object-fit:contain;animation:zoomIn 0.5s ease;}
+    #fadeLogo p{color:#8e24aa;font-weight:700;margin-top:10px;font-size:1.2rem;opacity:0;}
+    @keyframes fadeOut{to{opacity:0;visibility:hidden;}}
+    @keyframes zoomIn{0%{transform:scale(0.7);opacity:0;}100%{transform:scale(1);opacity:1;}}
+    .fadeBlessing{animation:blessFade 2s ease forwards;}
+    @keyframes blessFade{0%{opacity:0;transform:translateY(10px);}20%{opacity:1;}80%{opacity:1;}100%{opacity:0;transform:translateY(-20px);}}
+
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      z-index: 1001;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-weight: 600;
+    }
+    
+    .toast.show {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div id="fadeLogo">
+  <img id="fadeImg" src="maa.png" alt="Mother">
+  <p id="fadeText">Mother's Blessings 🙏</p>
+</div>
+
+<div class="card">
+  <img src="FuelTracker.png" alt="FuelTracker Logo" class="logo">
+  <h1>Vehicle Details</h1>
+  
+  <!-- Vehicle Details Section -->
+  <div class="vehicle-details-container" id="vehicleDetails">
+    <!-- Vehicle details will be populated by JavaScript -->
+  </div>
+
+  <!-- Reminders Section -->
+  <div class="reminder" id="reminderBox">
+    <h3>📋 Reminders & Alerts</h3>
+    <div id="reminderContent">
+      <!-- Reminders will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <button class="btn fuel" onclick="go('fuel.html')">
+    <i class="fas fa-gas-pump"></i> Fuel Entry
+  </button>
+
+  <div class="row">
+    <button class="btn back" onclick="goBack()">
+      <i class="fas fa-arrow-left"></i> Back to Vehicles
+    </button>
+    <button class="btn edit" onclick="editVehicle()">
+      <i class="fas fa-edit"></i> Edit Vehicle
+    </button>
+  </div>
+
+  <div class="row">
+    <button class="btn docs" onclick="go('docs.html')">
+      <i class="fas fa-file-alt"></i> Documents
+    </button>
+    <button class="btn reports" onclick="go('report.html')">
+      <i class="fas fa-chart-bar"></i> Reports
+    </button>
+  </div>
+
+  <div class="row">
+    <button class="btn service" onclick="go('service.html')">
+      <i class="fas fa-tools"></i> Servicing
+    </button>
+    <button class="btn toll" onclick="go('toll_tax.html')">
+      <i class="fas fa-road"></i> Toll Tax
+    </button>
+  </div>
+
+  <div class="credit">
+    Chakdaha Roy Computer Academy
+    <small>email : surajit.chakdaha@gmail.com :: Surajit Roy</small>
+    <div class="heart" onclick="showThanks()">❤️ Thanks ❤️</div>
+  </div>
+</div>
+
+<!-- Thanks Modal -->
+<div id="thanksBox" onclick="closeThanks()">
+  <div class="thanksMsg">
+    <p>If you like our effort, you can donate any amount starting from ₹1/- as you wish.<br>Creating an app requires significant time and effort.<br>Your support will encourage us to create better things in the future. 💖</p>
+    <button class="btn upi" onclick="goUPI(event)">💜 Go to UPI</button>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<script>
+// Get vehicle data from localStorage
+const currentVehicle = JSON.parse(localStorage.getItem('currentVehicle') || '{}');
+
+function go(page){
+  const fade=document.getElementById('fadeLogo');
+  const fadeImg=document.getElementById('fadeImg');
+  fadeImg.src="maa.png";
+  fade.classList.add('active');
+  setTimeout(()=>location.href=page,300);
+}
+
+function goBack() {
+  const fade=document.getElementById('fadeLogo');
+  const fadeImg=document.getElementById('fadeImg');
+  fadeImg.src="maa.png";
+  fade.classList.add('active');
+  setTimeout(()=>location.href='index.html',300);
+}
+
+function showThanks(){document.getElementById('thanksBox').classList.add('active');}
+function closeThanks(){document.getElementById('thanksBox').classList.remove('active');}
+function goUPI(e){e.stopPropagation();window.location.href="upi://pay?pa=406310110004309@ybl&pn=SURAJIT%20ROY&mc=0000&mode=02&purpose=00";}
+
+// Show toast notification
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 3000);
+}
+
+// Populate vehicle details
+function populateVehicleDetails() {
+  const vehicleDetails = document.getElementById('vehicleDetails');
+  
+  if (!currentVehicle || !currentVehicle.type) {
+    vehicleDetails.innerHTML = `
+      <div style="text-align: center; padding: 20px; color: #666;">
+        <i class="fas fa-car" style="font-size: 48px; margin-bottom: 15px; color: #ccc;"></i>
+        <h3>No Vehicle Selected</h3>
+        <p>Please go back and select a vehicle to view details.</p>
+      </div>
+    `;
+    return;
+  }
+
+  vehicleDetails.innerHTML = `
+    <div class="detail-row">
+      <span class="detail-label">Vehicle Type:</span>
+      <span class="detail-value">${currentVehicle.type}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Model:</span>
+      <span class="detail-value">${currentVehicle.model}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Vehicle Number:</span>
+      <span class="detail-value">${currentVehicle.number || 'Not specified'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Insurance Expiry:</span>
+      <span class="detail-value">${currentVehicle.insurance || 'Not set'}</span>
+    </div>
+    <div class="detail-row">
+      <span class="detail-label">Pollution Expiry:</span>
+      <span class="detail-value">${currentVehicle.pollution || 'Not set'}</span>
+    </div>
+  `;
+
+  // Update page title with vehicle info
+  document.title = `Fuel Tracker — ${currentVehicle.type}: ${currentVehicle.model}`;
+}
+
+// Calculate next service due date based on service history
+function calculateNextServiceDue() {
+  if (!currentVehicle || !currentVehicle.id) {
+    return null;
+  }
+
+  // Use vehicle-specific service data
+  const serviceKey = 'vm_service_v1_' + currentVehicle.id;
+  const serviceEntries = JSON.parse(localStorage.getItem(serviceKey) || '[]');
+  
+  if (serviceEntries.length === 0) {
+    return 'No service history found';
+  }
+
+  // Sort service entries by date (newest first)
+  serviceEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+  
+  const lastService = serviceEntries[0];
+  const lastServiceDate = new Date(lastService.date);
+  const lastOdometer = lastService.odo || 0;
+  
+  const now = new Date();
+  const daysSinceLastService = Math.floor((now - lastServiceDate) / (1000 * 60 * 60 * 24));
+  
+  // Calculate based on time (90 days) or distance (5000 km) - whichever comes first
+  const daysUntilTimeBased = 90 - daysSinceLastService;
+  const kmUntilDistanceBased = 5000 - (currentVehicle.currentOdometer - lastOdometer);
+  
+  if (daysUntilTimeBased <= 0 || kmUntilDistanceBased <= 0) {
+    return 'Service overdue!';
+  } else if (daysUntilTimeBased <= 15 || kmUntilDistanceBased <= 500) {
+    return `Service due in ${Math.min(daysUntilTimeBased, Math.ceil(kmUntilDistanceBased/50))} days`;
+  } else if (daysUntilTimeBased <= 45) {
+    return `Next service in ${daysUntilTimeBased} days`;
+  } else {
+    return `Next service in ${daysUntilTimeBased} days`;
+  }
+}
+
+// Calculate and display reminders
+function populateReminders() {
+  const reminderContent = document.getElementById('reminderContent');
+  
+  if (!currentVehicle || !currentVehicle.type) {
+    reminderContent.innerHTML = '<p>No vehicle selected</p>';
+    return;
+  }
+
+  let reminders = [];
+  const now = new Date();
+
+  // Insurance reminder
+  if (currentVehicle.insurance && currentVehicle.insurance !== '--') {
+    const insDate = parseDate(currentVehicle.insurance);
+    const daysUntilIns = Math.ceil((insDate - now) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilIns <= 0) {
+      reminders.push('❌ Insurance has expired! Please renew immediately.');
+    } else if (daysUntilIns <= 30) {
+      reminders.push(`🧾 Insurance expires in ${daysUntilIns} days`);
+    } else if (daysUntilIns <= 90) {
+      reminders.push(`📅 Insurance will expire in ${daysUntilIns} days`);
+    }
+  } else {
+    reminders.push('ℹ️ Insurance date not set');
+  }
+
+  // Pollution reminder
+  if (currentVehicle.pollution && currentVehicle.pollution !== '--') {
+    const polDate = parseDate(currentVehicle.pollution);
+    const daysUntilPol = Math.ceil((polDate - now) / (1000 * 60 * 60 * 24));
+    
+    if (daysUntilPol <= 0) {
+      reminders.push('❌ Pollution certificate has expired! Please renew immediately.');
+    } else if (daysUntilPol <= 15) {
+      reminders.push(`💨 Pollution certificate expires in ${daysUntilPol} days`);
+    } else if (daysUntilPol <= 45) {
+      reminders.push(`🌿 Pollution certificate will expire in ${daysUntilPol} days`);
+    }
+  } else {
+    reminders.push('ℹ️ Pollution certificate date not set');
+  }
+
+  // Service reminder - now calculated dynamically
+  const serviceReminder = calculateNextServiceDue();
+  if (serviceReminder) {
+    if (serviceReminder === 'Service overdue!') {
+      reminders.push(`🔧 ${serviceReminder}`);
+    } else if (serviceReminder.includes('due in') && serviceReminder.includes('15')) {
+      reminders.push(`🔧 ${serviceReminder} - Schedule soon!`);
+    } else {
+      reminders.push(`🔧 ${serviceReminder}`);
+    }
+  } else {
+    reminders.push('🔧 No service history available');
+  }
+
+  if (reminders.length === 0) {
+    reminders.push('✅ All documents are up to date');
+  }
+
+  reminderContent.innerHTML = reminders.map(reminder => 
+    `<div class="reminder-item">${reminder}</div>`
+  ).join('');
+}
+
+// Parse date from DD/MM/YYYY format
+function parseDate(dateString) {
+  if (!dateString || dateString === '--') return null;
+  
+  const parts = dateString.split('/');
+  if (parts.length === 3) {
+    return new Date(parts[2], parts[1] - 1, parts[0]);
+  }
+  return null;
+}
+
+// Edit vehicle function
+function editVehicle() {
+  if (currentVehicle && currentVehicle.id) {
+    // Store the vehicle ID for editing
+    localStorage.setItem('editVehicleId', currentVehicle.id);
+    // Navigate back to main page for editing
+    goBack();
+  } else {
+    showToast('No vehicle selected for editing');
+  }
+}
+
+// Initialize on load
+window.addEventListener('DOMContentLoaded', () => {
+  populateVehicleDetails();
+  populateReminders();
+});
+
+window.addEventListener('pageshow',()=>{
+  const fade=document.getElementById('fadeLogo');
+  const fadeText=document.getElementById('fadeText');
+  fade.classList.add('active');
+  fadeText.classList.add('fadeBlessing');
+  setTimeout(()=>fade.classList.remove('active'),2000);
+});
+</script>
+</body>
+</html>
