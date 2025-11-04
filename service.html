@@ -1,185 +1,717 @@
-﻿<!doctype html>
-<html lang="bn">
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Servicing Detail — Fuel Tracker</title>
+<title>Vehicle Manager — Servicing</title>
 <style>
-  :root{
-    --bg1:#f5e0c3;
-    --bg2:#ffe0b2;
-    --card:#fff3e0;
-    --accent:#8e24aa;
-    --text:#4a2f23;
+  :root {
+    --bg1: #004d40;
+    --bg2: #1b5e20;
+    --card: #fff8e1;
+    --accent1: #ff6f00;
+    --accent2: #d32f2f;
+    --accent3: #388e3c;
+    --accent4: #1976d2;
+    --text: #2e2e2e;
   }
 
-  *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',sans-serif;}
-
-  body{
-    margin:0;
-    background:linear-gradient(135deg,var(--bg1),var(--bg2));
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:18px;
+  * {
+    box-sizing: border-box;
+    font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
   }
 
-  .card{
-    width:100%;
-    max-width:520px;
-    background:var(--card);
-    border-radius:20px;
-    padding:24px;
-    box-shadow:0 12px 30px rgba(0,0,0,0.15);
-    text-align:center;
+  body {
+    margin: 0;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 1.2s ease;
   }
 
-  .logo{
-    width:100px;height:100px;
-    display:block;margin:0 auto 12px auto;
-    border-radius:12px;
-    object-fit:contain;
-    box-shadow:0 6px 18px rgba(0,0,0,0.3);
-    animation:fadeIn 1s ease;
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
   }
 
-  @keyframes fadeIn{
-    from{opacity:0;transform:scale(0.9);}
-    to{opacity:1;transform:scale(1);}
+  .card {
+    width: 100%;
+    max-width: 600px;
+    background: var(--card);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+    border: 2px solid #ffd54f;
   }
 
-  h1{color:var(--accent);margin:8px 0 10px 0;}
-  p{color:var(--text);font-size:0.95rem;margin-bottom:14px;}
-
-  label{display:block;margin-top:10px;font-weight:600;color:var(--text);}
-  input[type="text"],input[type="date"],input[type="number"]{
-    width:100%;padding:10px;border-radius:10px;border:1px solid #a6c9b9;margin-top:6px;
-    background:linear-gradient(90deg,#eaf5ff,#e8ffe8);
+  .logo {
+    width: 100px;
+    height: 100px;
+    display: block;
+    margin: 0 auto 8px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #fff8e1;
+    padding: 5px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    animation: bounce 2s infinite;
   }
 
-  .checkbox-group{
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    margin-top:10px;
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
   }
 
-  .btn{
-    border:none;border-radius:10px;padding:10px 14px;font-weight:700;
-    cursor:pointer;color:#fff;transition:0.3s;margin-top:14px;
+  h1 {
+    text-align: center;
+    color: var(--accent1);
+    margin: 0 0 5px 0;
+    font-size: 1.8rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
   }
-  .btn.save{background:linear-gradient(90deg,#81c784,#4caf50);}
-  .btn.back{background:linear-gradient(90deg,#42a5f5,#64b5f6);}
-  .btn:hover{filter:brightness(1.1);}
 
-  table{width:100%;border-collapse:collapse;margin-top:18px;}
-  th,td{padding:8px;text-align:center;border-bottom:1px solid #f3e5ab;}
-  th{background:#f0d8ff;color:#4b2e05;}
-  td{background:#fff8e1;}
-
-  #fadeLogo{
-    position:fixed;top:0;left:0;width:100%;height:100%;
-    background:linear-gradient(135deg,#ffb74d,#ffcc80);
-    display:flex;align-items:center;justify-content:center;
-    opacity:0;visibility:hidden;
-    transition:opacity 0.5s ease;
-    z-index:1000;
+  .car-name {
+    text-align: center;
+    color: var(--accent4);
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin: 0 0 20px 0;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    padding: 8px 16px;
+    border-radius: 25px;
+    display: inline-block;
+    border: 2px solid #64b5f6;
   }
-  #fadeLogo.active{opacity:1;visibility:visible;animation:fadeOut 1s ease 1.8s forwards;}
-  #fadeLogo img{width:120px;height:120px;object-fit:contain;animation:zoomIn 1.2s ease;}
-  @keyframes fadeOut{to{opacity:0;visibility:hidden;}}
-  @keyframes zoomIn{0%{transform:scale(0.6);opacity:0;}100%{transform:scale(1);opacity:1;}}
+
+  .header-container {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .required::after {
+    content: " *";
+    color: var(--accent2);
+    font-weight: bold;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 2px solid #ffb74d;
+    background: linear-gradient(135deg, #fffde7, #fff3e0);
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    font-family: inherit;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent1);
+    box-shadow: 0 0 10px rgba(255, 111, 0, 0.3);
+    transform: scale(1.02);
+  }
+
+  .btn {
+    border: none;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    margin: 8px 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .btn.add {
+    background: linear-gradient(135deg, var(--accent3), #2e7d32);
+    color: white;
+    width: 100%;
+    margin-top: 20px;
+  }
+
+  .btn.update {
+    background: linear-gradient(135deg, var(--accent4), #1565c0);
+    color: white;
+  }
+
+  .btn.edit {
+    background: linear-gradient(135deg, #ffa000, #ff6f00);
+    color: white;
+  }
+
+  .btn.delete {
+    background: linear-gradient(135deg, var(--accent2), #c62828);
+    color: white;
+  }
+
+  .btn.back {
+    background: linear-gradient(135deg, #7b1fa2, #4a148c);
+    color: white;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+  }
+
+  .service-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .service-table th {
+    background: linear-gradient(135deg, var(--accent1), #e65100);
+    color: white;
+    padding: 12px 8px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  .service-table td {
+    padding: 10px 8px;
+    text-align: center;
+    border-bottom: 1px solid #ffe0b2;
+  }
+
+  .service-table tr:nth-child(even) {
+    background: #fff8e1;
+  }
+
+  .service-table tr:nth-child(odd) {
+    background: #fff3e0;
+  }
+
+  .service-table tr:hover {
+    background: #ffe0b2;
+    transform: scale(1.01);
+    transition: all 0.2s ease;
+  }
+
+  .summary-card {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    border: 2px solid #64b5f6;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+  }
+
+  .summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .total-cost {
+    border-top: 2px solid #64b5f6;
+    padding-top: 10px;
+    margin-top: 12px;
+    font-size: 1.1rem;
+    color: #d32f2f;
+  }
+
+  .no-data {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 30px;
+    background: #fff3e0;
+    border-radius: 12px;
+    margin: 15px 0;
+    border: 2px dashed #ffb74d;
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .btn-small {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+  }
+
+  .highlight {
+    background: linear-gradient(135deg, #fff9c4, #fff59d) !important;
+    border: 2px solid #ffd600;
+  }
+
+  .service-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 2px;
+  }
+
+  .badge-regular { background: #e8f5e8; color: #388e3c; }
+  .badge-major { background: #fff3e0; color: #f57c00; }
+  .badge-emergency { background: #ffebee; color: #d32f2f; }
+
+  .optional-note {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  .details-cell {
+    max-width: 150px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .details-cell:hover {
+    white-space: normal;
+    overflow: visible;
+    background: #fff3e0;
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (max-width: 480px) {
+    .card {
+      padding: 16px;
+    }
+    
+    .btn {
+      padding: 12px 16px;
+      font-size: 0.9rem;
+    }
+    
+    .service-table {
+      font-size: 0.8rem;
+    }
+    
+    .action-buttons {
+      flex-direction: column;
+    }
+    
+    .details-cell {
+      max-width: 100px;
+    }
+  }
 </style>
 </head>
 <body>
-
-  <!-- fade logo -->
-  <div id="fadeLogo">
-    <img src="FuelTracker.png" alt="Logo">
-  </div>
-
   <div class="card">
-    <img src="FuelTracker.png" class="logo" alt="Logo">
-    <h1>🔧 Servicing Detail</h1>
-    <p>গাড়ির সার্ভিসিং রেকর্ড রাখুন — কবে, কোথায়, কত টাকায় সার্ভিস করিয়েছেন এবং কোন ধরনের সার্ভিস।</p>
-
-    <label>Servicing Date</label>
-    <input type="date" id="srvDate">
-
-    <label>Garage / Workshop Name (ঐচ্ছিক)</label>
-    <input type="text" id="srvPlace" placeholder="e.g. Roy Motors, Kolkata">
-
-    <label>Bill Amount (₹)</label>
-    <input type="number" id="srvCost" placeholder="e.g. 1500">
-
-    <label>Service Type (ঐচ্ছিক)</label>
-    <div class="checkbox-group">
-      <label><input type="checkbox" id="major"> Major Service</label>
-      <label><input type="checkbox" id="minor"> Minor / Puncture</label>
+    <img src="FuelTracker.png" alt="FuelTracker Logo" class="logo">
+    
+    <div class="header-container">
+      <h1>🔧 Servicing Manager</h1>
+      <div class="car-name" id="carNameDisplay">🚗 Loading vehicle...</div>
     </div>
 
-    <label>Details / Parts Changed (ঐচ্ছিক)</label>
-    <input type="text" id="srvNote" placeholder="e.g. Oil, Filter, Brake Checkup">
+    <!-- Service Entry Form -->
+    <div class="form-group">
+      <label class="required">📅 Date</label>
+      <input type="date" id="serviceDate">
+    </div>
 
-    <button class="btn save" onclick="saveService()">💾 Save Record</button>
-    <button class="btn back" onclick="backHome()">← Back to Home</button>
+    <div class="form-group">
+      <label class="required">💰 Cost (₹)</label>
+      <input type="number" id="serviceCost" placeholder="e.g., 1500">
+    </div>
 
-    <table id="tbl">
-      <thead><tr><th>Date</th><th>Amount</th><th>Type</th><th>Garage</th><th>Details</th></tr></thead>
-      <tbody></tbody>
+    <div class="form-group">
+      <label class="required">🔧 Service Type</label>
+      <select id="serviceType">
+        <option value="regular">Regular Service</option>
+        <option value="major">Major Service</option>
+        <option value="emergency">Emergency Repair</option>
+        <option value="oil">Oil Change</option>
+        <option value="tire">Tire Replacement</option>
+        <option value="brake">Brake Service</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>🏢 Garage/Mechanic</label>
+      <input type="text" id="garageName" placeholder="e.g., ABC Auto Service">
+      <div class="optional-note">Optional field</div>
+    </div>
+
+    <div class="form-group">
+      <label>📝 Service Details</label>
+      <textarea id="serviceDetails" placeholder="e.g., Engine oil change, filter replacement, brake inspection..."></textarea>
+      <div class="optional-note">Optional field</div>
+    </div>
+
+    <div class="form-group">
+      <label>📊 Odometer Reading</label>
+      <input type="number" id="odoReading" placeholder="e.g., 45000">
+      <div class="optional-note">Optional field</div>
+    </div>
+
+    <button class="btn add" onclick="addOrUpdateService()" id="addUpdateBtn">➕ Add Service Entry</button>
+
+    <!-- Summary Section -->
+    <div class="summary-card">
+      <div class="summary-item">
+        <span>Total Service Entries:</span>
+        <span id="totalEntries">0</span>
+      </div>
+      <div class="summary-item">
+        <span>This Month:</span>
+        <span id="monthlyTotal">₹0</span>
+      </div>
+      <div class="summary-item">
+        <span>Last Service:</span>
+        <span id="lastService">—</span>
+      </div>
+      <div class="summary-item total-cost">
+        <span>Total Amount Spent:</span>
+        <span id="totalAmount">₹0</span>
+      </div>
+    </div>
+
+    <!-- Service Entries Table -->
+    <table class="service-table" id="serviceTable">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Cost</th>
+          <th>Type</th>
+          <th>Garage</th>
+          <th>Details</th>
+          <th>Odometer</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="serviceTbody">
+        <!-- Data will be populated here -->
+      </tbody>
     </table>
+
+    <div id="noServiceData" class="no-data" style="display: none;">
+      🔧 No service entries found!<br>
+      <small>Add your first service entry above to get started.</small>
+    </div>
+
+    <button class="btn back" onclick="goBack()">← Back to Vehicle Details</button>
   </div>
 
 <script>
-  const SKEY='vm_service_v1';
+  const SKEY = 'vm_service_v1';
+  let serviceEntries = [];
+  let editingIndex = -1;
+  let currentVehicle = null;
 
-  function loadService(){
-    const data=JSON.parse(localStorage.getItem(SKEY)||'[]');
-    const tbody=document.querySelector('#tbl tbody');
-    tbody.innerHTML='';
-    data.forEach(d=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${d.date}</td><td>₹${d.cost}</td><td>${d.type}</td><td>${d.place||'—'}</td><td>${d.note||'—'}</td>`;
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get current vehicle data - try multiple storage locations
+    currentVehicle = JSON.parse(localStorage.getItem('currentVehicle') || '{}');
+    
+    // If no vehicle found in currentVehicle, try to get from vehicles list
+    if (!currentVehicle || !currentVehicle.id) {
+      const vehicles = JSON.parse(localStorage.getItem('fuelTracker_vehicles') || '[]');
+      const currentVehicleId = localStorage.getItem('currentVehicleId');
+      if (currentVehicleId && vehicles.length > 0) {
+        currentVehicle = vehicles.find(v => v.id == currentVehicleId) || {};
+      }
+    }
+    
+    showCarName();
+    
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('serviceDate').value = today;
+    loadServiceEntries();
+    updateSummary();
+  });
+
+  function showCarName() {
+    const carNameDisplay = document.getElementById('carNameDisplay');
+    
+    if (currentVehicle && currentVehicle.type && currentVehicle.model) {
+      let vehicleName = `${currentVehicle.type}: ${currentVehicle.model}`;
+      if (currentVehicle.number && currentVehicle.number.trim() !== '') {
+        vehicleName += ` (${currentVehicle.number})`;
+      }
+      carNameDisplay.textContent = `🚗 ${vehicleName}`;
+      carNameDisplay.style.background = 'linear-gradient(135deg,#e3f2fd,#bbdefb)';
+      carNameDisplay.style.borderColor = '#64b5f6';
+      
+      // Update page title with vehicle info
+      document.title = `Servicing - ${currentVehicle.type}: ${currentVehicle.model}`;
+    } else {
+      carNameDisplay.textContent = '🚗 No Vehicle Selected';
+      carNameDisplay.style.background = 'linear-gradient(135deg,#ffcdd2,#ef9a9a)';
+      carNameDisplay.style.borderColor = '#f44336';
+      document.title = 'Servicing - No Vehicle Selected';
+    }
+  }
+
+  function loadServiceEntries() {
+    // Use vehicle-specific storage key
+    const serviceKey = currentVehicle && currentVehicle.id ? SKEY + '_' + currentVehicle.id : SKEY;
+    serviceEntries = JSON.parse(localStorage.getItem(serviceKey) || '[]');
+    
+    const tbody = document.getElementById('serviceTbody');
+    const noData = document.getElementById('noServiceData');
+    
+    tbody.innerHTML = '';
+    
+    if (serviceEntries.length === 0) {
+      noData.style.display = 'block';
+      return;
+    } else {
+      noData.style.display = 'none';
+    }
+
+    // Sort by date (newest first)
+    serviceEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    serviceEntries.forEach((entry, index) => {
+      const tr = document.createElement('tr');
+      if (index === editingIndex) {
+        tr.classList.add('highlight');
+      }
+      
+      const serviceBadge = getServiceBadge(entry.serviceType);
+      
+      tr.innerHTML = `
+        <td>${formatDate(entry.date)}</td>
+        <td style="font-weight: bold; color: #d32f2f;">₹${entry.cost}</td>
+        <td>${serviceBadge}</td>
+        <td>${entry.garage || '—'}</td>
+        <td class="details-cell" title="${entry.details || ''}">${entry.details || '—'}</td>
+        <td>${entry.odo ? entry.odo + ' km' : '—'}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn edit btn-small" onclick="editServiceEntry(${index})">✏️</button>
+            <button class="btn delete btn-small" onclick="deleteServiceEntry(${index})">🗑️</button>
+          </div>
+        </td>
+      `;
       tbody.appendChild(tr);
     });
   }
 
-  function saveService(){
-    const date=document.getElementById('srvDate').value;
-    const cost=document.getElementById('srvCost').value.trim();
-    const place=document.getElementById('srvPlace').value.trim();
-    const note=document.getElementById('srvNote').value.trim();
-    const isMajor=document.getElementById('major').checked;
-    const isMinor=document.getElementById('minor').checked;
+  function getServiceBadge(type) {
+    const badges = {
+      'regular': '<span class="service-badge badge-regular">🛠️ Regular</span>',
+      'major': '<span class="service-badge badge-major">🔧 Major</span>',
+      'emergency': '<span class="service-badge badge-emergency">🚨 Emergency</span>',
+      'oil': '<span class="service-badge badge-regular">🛢️ Oil Change</span>',
+      'tire': '<span class="service-badge badge-regular">🌀 Tire</span>',
+      'brake': '<span class="service-badge badge-regular">🛑 Brake</span>',
+      'other': '<span class="service-badge badge-regular">🔩 Other</span>'
+    };
+    return badges[type] || badges['other'];
+  }
 
-    // ✅ কেবল তারিখ ও টাকা বাধ্যতামূলক
-    if(!date || !cost){
-      alert('⚠️ অনুগ্রহ করে তারিখ ও টাকার পরিমাণ দিন।');
+  function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    return `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`;
+  }
+
+  function addOrUpdateService() {
+    const date = document.getElementById('serviceDate').value;
+    const cost = parseFloat(document.getElementById('serviceCost').value);
+    const serviceType = document.getElementById('serviceType').value;
+    const garage = document.getElementById('garageName').value.trim();
+    const details = document.getElementById('serviceDetails').value.trim();
+    const odo = document.getElementById('odoReading').value;
+
+    // Only validate required fields
+    if (!date || isNaN(cost) || cost <= 0 || !serviceType) {
+      alert('Please fill all required fields (marked with *)!');
       return;
     }
 
-    const type=isMajor && isMinor ? "Major + Minor" :
-                isMajor ? "Major" :
-                isMinor ? "Minor" : "—";
+    const serviceEntry = {
+      date,
+      cost,
+      serviceType,
+      garage: garage || '',
+      details: details || '',
+      odo: odo ? parseInt(odo) : null
+    };
 
-    const record={date,cost,place,note,type};
-    const data=JSON.parse(localStorage.getItem(SKEY)||'[]');
-    data.push(record);
-    localStorage.setItem(SKEY,JSON.stringify(data));
+    // Use vehicle-specific storage key
+    const serviceKey = currentVehicle && currentVehicle.id ? SKEY + '_' + currentVehicle.id : SKEY;
 
-    alert('✅ সার্ভিস রেকর্ড সংরক্ষিত হয়েছে!');
-    document.querySelectorAll('input').forEach(el=>el.type!='checkbox'?el.value='':el.checked=false);
-    loadService();
+    if (editingIndex === -1) {
+      // Add new entry
+      serviceEntries.push(serviceEntry);
+      showMessage('✅ Service entry added successfully!', 'success');
+    } else {
+      // Update existing entry
+      serviceEntries[editingIndex] = serviceEntry;
+      showMessage('✅ Service entry updated successfully!', 'success');
+      cancelEdit();
+    }
+
+    localStorage.setItem(serviceKey, JSON.stringify(serviceEntries));
+    loadServiceEntries();
+    updateSummary();
+    clearForm();
   }
 
-  function backHome(){
-    const fade=document.getElementById('fadeLogo');
-    fade.classList.add('active');
-    setTimeout(()=>location.href='index.html',1800);
+  function editServiceEntry(index) {
+    const entry = serviceEntries[index];
+    document.getElementById('serviceDate').value = entry.date;
+    document.getElementById('serviceCost').value = entry.cost;
+    document.getElementById('serviceType').value = entry.serviceType || 'regular';
+    document.getElementById('garageName').value = entry.garage || '';
+    document.getElementById('serviceDetails').value = entry.details || '';
+    document.getElementById('odoReading').value = entry.odo || '';
+    
+    editingIndex = index;
+    document.getElementById('addUpdateBtn').textContent = '💾 Update Entry';
+    document.getElementById('addUpdateBtn').style.background = 'linear-gradient(135deg, #1976d2, #1565c0)';
+    
+    loadServiceEntries(); // Refresh to highlight the editing row
   }
 
-  loadService();
+  function deleteServiceEntry(index) {
+    if (confirm('Are you sure you want to delete this service entry?')) {
+      serviceEntries.splice(index, 1);
+      
+      // Use vehicle-specific storage key
+      const serviceKey = currentVehicle && currentVehicle.id ? SKEY + '_' + currentVehicle.id : SKEY;
+      localStorage.setItem(serviceKey, JSON.stringify(serviceEntries));
+      
+      if (editingIndex === index) {
+        cancelEdit();
+      }
+      
+      loadServiceEntries();
+      updateSummary();
+      showMessage('🗑️ Service entry deleted successfully!', 'info');
+    }
+  }
+
+  function cancelEdit() {
+    editingIndex = -1;
+    document.getElementById('addUpdateBtn').textContent = '➕ Add Service Entry';
+    document.getElementById('addUpdateBtn').style.background = 'linear-gradient(135deg, #388e3c, #2e7d32)';
+    clearForm();
+    loadServiceEntries(); // Refresh to remove highlight
+  }
+
+  function clearForm() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('serviceDate').value = today;
+    document.getElementById('serviceCost').value = '';
+    document.getElementById('serviceType').value = 'regular';
+    document.getElementById('garageName').value = '';
+    document.getElementById('serviceDetails').value = '';
+    document.getElementById('odoReading').value = '';
+  }
+
+  function updateSummary() {
+    const totalEntries = serviceEntries.length;
+    const totalAmount = serviceEntries.reduce((sum, entry) => sum + parseFloat(entry.cost || 0), 0);
+    
+    // Calculate monthly total
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const monthlyTotal = serviceEntries.reduce((sum, entry) => {
+      const entryDate = new Date(entry.date);
+      if (entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear) {
+        return sum + parseFloat(entry.cost || 0);
+      }
+      return sum;
+    }, 0);
+    
+    // Get last service date
+    let lastService = '—';
+    if (serviceEntries.length > 0) {
+      const lastEntry = serviceEntries[0]; // Already sorted by date (newest first)
+      lastService = formatDate(lastEntry.date);
+    }
+    
+    document.getElementById('totalEntries').textContent = totalEntries;
+    document.getElementById('monthlyTotal').textContent = `₹${monthlyTotal.toFixed(2)}`;
+    document.getElementById('lastService').textContent = lastService;
+    document.getElementById('totalAmount').textContent = `₹${totalAmount.toFixed(2)}`;
+  }
+
+  function showMessage(message, type) {
+    // Create a temporary message element
+    const msg = document.createElement('div');
+    msg.textContent = message;
+    msg.style.cssText = `
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: ${type === 'success' ? '#4caf50' : '#2196f3'};
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+      animation: slideDown 0.3s ease;
+    `;
+    
+    document.body.appendChild(msg);
+    
+    setTimeout(() => {
+      msg.style.animation = 'slideUp 0.3s ease';
+      setTimeout(() => msg.remove(), 300);
+    }, 3000);
+  }
+
+  function goBack() { 
+    // Navigate back to vehicle details page
+    window.location.href = 'vehicle.html';
+  }
+
+  // Add CSS for message animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideDown {
+      from { top: -50px; opacity: 0; }
+      to { top: 20px; opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { top: 20px; opacity: 1; }
+      to { top: -50px; opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
 </script>
 </body>
 </html>
