@@ -1,5 +1,5 @@
-﻿<!doctype html>
-<html lang="bn">
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -11,10 +11,12 @@
     --card:#fff8e1;
     --accent1:#fb8c00;
     --accent2:#8e24aa;
+    --accent3:#2196F3;
+    --accent4:#4caf50;
     --text:#4a2f23;
   }
 
-  *{box-sizing:border-box;font-family:"Noto Sans Bengali",Inter,system-ui,Segoe UI,Roboto,sans-serif;}
+  *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif;}
 
   body{
     margin:0;padding:18px;
@@ -25,7 +27,7 @@
   }
   @keyframes fadeIn{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
 
-  .wrap{width:100%;max-width:720px;text-align:center;}
+  .wrap{width:100%;max-width:800px;text-align:center;}
 
   .logo{
     width:110px;height:110px;display:block;margin:0 auto 6px;
@@ -33,9 +35,22 @@
   }
   @keyframes zoomIn{0%{transform:scale(0.5);opacity:0;}100%{transform:scale(1);opacity:1;}}
 
-  .carName{
-    text-align:center;font-weight:700;color:var(--text);
-    margin:10px 0 20px;font-size:1.15rem;
+  .car-name {
+    text-align:center;
+    color: var(--accent3);
+    font-weight:700;
+    font-size:1.1rem;
+    margin:0 0 20px 0;
+    background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+    padding:6px 12px;
+    border-radius:20px;
+    display:inline-block;
+    border:2px solid #64b5f6;
+  }
+
+  .header-container {
+    text-align:center;
+    margin-bottom:20px;
   }
 
   .section{
@@ -45,6 +60,32 @@
 
   h1{color:var(--accent1);margin:8px 0;}
   h2{color:var(--accent2);margin:8px 0;}
+  h3{color:var(--accent3);margin:8px 0;}
+
+  .filter-section {
+    background:linear-gradient(135deg,#e8f5e8,#f0fff0);
+    border-radius:12px;
+    padding:15px;
+    margin:15px 0;
+    border:2px solid #4caf50;
+  }
+
+  .filter-controls {
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin:10px 0;
+  }
+
+  select, input {
+    padding:8px 12px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:0.9rem;
+    background:white;
+    min-width:120px;
+  }
 
   table{
     width:100%;border-collapse:collapse;margin-top:10px;font-size:0.92rem;
@@ -58,18 +99,52 @@
   .btn{
     padding:10px 14px;border:none;border-radius:10px;font-weight:700;
     cursor:pointer;margin:6px;transition:0.25s;color:#fff;
+    font-size:0.9rem;
   }
   .btn.export{background:linear-gradient(90deg,#81c784,#4caf50);}
   .btn.print{background:linear-gradient(90deg,#ffb74d,#fb8c00);}
   .btn.back{background:linear-gradient(90deg,#64b5f6,#42a5f5);}
+  .btn.filter{background:linear-gradient(90deg,#ba68c8,#8e24aa);}
+  .btn.reset{background:linear-gradient(90deg,#78909c,#546e7a);}
   .btn:hover{filter:brightness(1.1);}
   .controls{text-align:center;margin-top:10px;}
+
+  .summary-box {
+    background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+    border-radius:12px;
+    padding:15px;
+    margin:10px 0;
+    border:2px solid #64b5f6;
+  }
+
+  .summary-item {
+    display:flex;
+    justify-content:space-between;
+    margin:8px 0;
+    font-weight:600;
+  }
+
+  .period-info {
+    background:linear-gradient(135deg,#fff3e0,#ffecb3);
+    padding:10px;
+    border-radius:8px;
+    margin:10px 0;
+    font-weight:600;
+    color:#e65100;
+  }
+
+  .no-data {
+    text-align:center;
+    color:#666;
+    font-style:italic;
+    padding:20px;
+  }
 
   /* ✅ Print Setup */
   @media print{
     @page{size:A4 portrait;margin:1.5cm;}
     body{background:#fff;}
-    .btn,.controls{display:none !important;}
+    .btn,.controls,.filter-section{display:none !important;}
     .section{box-shadow:none;border:none;}
     .wrap{max-width:100%;width:100%;}
     th,td{border:1px solid #999;}
@@ -79,15 +154,56 @@
 <body>
   <div class="wrap">
     <img src="FuelTracker.png" alt="FuelTracker Logo" class="logo">
-    <div class="carName" id="carNameDisplay"></div>
+    
+    <div class="header-container">
+      <h1>📊 Vehicle Reports</h1>
+      <div class="car-name" id="carNameDisplay">🚗 Loading vehicle...</div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <h3 style="color:var(--accent4);">📅 Filter Reports</h3>
+      <div class="filter-controls">
+        <select id="reportType">
+          <option value="all">All Data</option>
+          <option value="monthly">This Month</option>
+          <option value="yearly">This Year</option>
+          <option value="custom">Specific Month</option>
+        </select>
+        
+        <select id="customMonth" style="display:none;">
+          <option value="01">January</option>
+          <option value="02">February</option>
+          <option value="03">March</option>
+          <option value="04">April</option>
+          <option value="05">May</option>
+          <option value="06">June</option>
+          <option value="07">July</option>
+          <option value="08">August</option>
+          <option value="09">September</option>
+          <option value="10">October</option>
+          <option value="11">November</option>
+          <option value="12">December</option>
+        </select>
+        
+        <select id="customYear" style="display:none;">
+          <!-- Years will be populated dynamically -->
+        </select>
+        
+        <button class="btn filter" onclick="applyFilter()">🔍 Apply Filter</button>
+        <button class="btn reset" onclick="resetFilter()">🔄 Reset</button>
+      </div>
+      <div id="periodInfo" class="period-info"></div>
+    </div>
 
     <!-- Fuel Report -->
     <div class="section">
       <h1>⛽ Fuel Report</h1>
       <table id="fuelTbl">
-        <thead><tr><th>Date</th><th>Liters</th><th>Amount</th><th>Odo</th><th>Dist</th><th>Mileage</th></tr></thead>
+        <thead><tr><th>Date</th><th>Price/Liter</th><th>Amount</th><th>Odometer</th><th>Distance</th><th>Mileage</th></tr></thead>
         <tbody></tbody>
       </table>
+      <div id="fuelNoData" class="no-data" style="display:none;">No fuel data found for selected period</div>
     </div>
 
     <!-- Service Report -->
@@ -97,19 +213,100 @@
         <thead><tr><th>Date</th><th>Garage</th><th>Amount</th><th>Details</th></tr></thead>
         <tbody></tbody>
       </table>
+      <div id="serviceNoData" class="no-data" style="display:none;">No service data found for selected period</div>
+    </div>
+
+    <!-- Toll Tax Report -->
+    <div class="section">
+      <h3>🛣️ Toll Tax Report</h3>
+      <table id="tollTbl">
+        <thead><tr><th>Date</th><th>Toll Plaza</th><th>Amount</th><th>Vehicle Type</th><th>Route</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div id="tollNoData" class="no-data" style="display:none;">No toll tax data found for selected period</div>
+    </div>
+
+    <!-- Summary Section -->
+    <div class="section">
+      <h2>📊 Summary</h2>
+      <div class="summary-box">
+        <div class="summary-item">
+          <span>Total Fuel Cost:</span>
+          <span id="totalFuel">₹0</span>
+        </div>
+        <div class="summary-item">
+          <span>Total Service Cost:</span>
+          <span id="totalService">₹0</span>
+        </div>
+        <div class="summary-item">
+          <span>Total Toll Tax:</span>
+          <span id="totalToll">₹0</span>
+        </div>
+        <div class="summary-item" style="border-top:2px solid #64b5f6;padding-top:8px;margin-top:12px;">
+          <span style="font-size:1.1em;color:#d32f2f;">Total Expenses:</span>
+          <span style="font-size:1.1em;color:#d32f2f;" id="totalExpenses">₹0</span>
+        </div>
+      </div>
     </div>
 
     <div class="controls">
       <button class="btn export" onclick="exportCSV()">📁 Export CSV</button>
       <button class="btn print" onclick="window.print()">🖨️ Print / Save PDF</button>
-      <button class="btn back" onclick="location.href='index.html'">← Back to Home</button>
+      <button class="btn back" onclick="goBack()">← Back to Vehicle Details</button>
     </div>
   </div>
 
 <script>
   const FKEY='fuel_entries_v1';
   const SKEY='vm_service_v1';
-  const MKEY='vm_meta_v1';
+  const TKEY='toll_tax_v1';
+
+  let currentFilter = 'all';
+  let currentMonth = '';
+  let currentYear = '';
+  let currentVehicle = null;
+
+  // Initialize on load
+  document.addEventListener('DOMContentLoaded', function() {
+    // Get current vehicle data - try multiple storage locations
+    currentVehicle = JSON.parse(localStorage.getItem('currentVehicle') || '{}');
+    
+    // If no vehicle found in currentVehicle, try to get from vehicles list
+    if (!currentVehicle || !currentVehicle.id) {
+      const vehicles = JSON.parse(localStorage.getItem('fuelTracker_vehicles') || '[]');
+      const currentVehicleId = localStorage.getItem('currentVehicleId');
+      if (currentVehicleId && vehicles.length > 0) {
+        currentVehicle = vehicles.find(v => v.id == currentVehicleId) || {};
+      }
+    }
+    
+    showCarName();
+    setupFilterControls();
+    calculateSummary();
+    updatePeriodInfo();
+  });
+
+  function showCarName() {
+    const carNameDisplay = document.getElementById('carNameDisplay');
+    
+    if (currentVehicle && currentVehicle.type && currentVehicle.model) {
+      let vehicleName = `${currentVehicle.type}: ${currentVehicle.model}`;
+      if (currentVehicle.number && currentVehicle.number.trim() !== '') {
+        vehicleName += ` (${currentVehicle.number})`;
+      }
+      carNameDisplay.textContent = `🚗 ${vehicleName}`;
+      carNameDisplay.style.background = 'linear-gradient(135deg,#e3f2fd,#bbdefb)';
+      carNameDisplay.style.borderColor = '#64b5f6';
+      
+      // Update page title with vehicle info
+      document.title = `Reports - ${currentVehicle.type}: ${currentVehicle.model}`;
+    } else {
+      carNameDisplay.textContent = '🚗 No Vehicle Selected';
+      carNameDisplay.style.background = 'linear-gradient(135deg,#ffcdd2,#ef9a9a)';
+      carNameDisplay.style.borderColor = '#f44336';
+      document.title = 'Reports - No Vehicle Selected';
+    }
+  }
 
   function toDisplay(iso){
     if(!iso)return'—';
@@ -117,47 +314,276 @@
     return `${String(d.getDate()).padStart(2,'0')}-${String(d.getMonth()+1).padStart(2,'0')}-${d.getFullYear()}`;
   }
 
+  function getMonthYearFromDate(dateStr) {
+    const date = new Date(dateStr);
+    return {
+      month: String(date.getMonth() + 1).padStart(2, '0'),
+      year: date.getFullYear().toString()
+    };
+  }
+
+  function getAllAvailableYears() {
+    const years = new Set();
+    
+    // Use vehicle-specific storage keys
+    const fuelKey = currentVehicle && currentVehicle.id ? FKEY + '_' + currentVehicle.id : FKEY;
+    const serviceKey = currentVehicle && currentVehicle.id ? SKEY + '_' + currentVehicle.id : SKEY;
+    const tollKey = currentVehicle && currentVehicle.id ? TKEY + '_' + currentVehicle.id : TKEY;
+    
+    const allData = [
+      ...JSON.parse(localStorage.getItem(fuelKey)||'[]'),
+      ...JSON.parse(localStorage.getItem(serviceKey)||'[]'),
+      ...JSON.parse(localStorage.getItem(tollKey)||'[]')
+    ];
+    
+    allData.forEach(entry => {
+      if (entry.date) {
+        const year = new Date(entry.date).getFullYear();
+        years.add(year);
+      }
+    });
+    
+    // If no data found, add current year
+    if (years.size === 0) {
+      years.add(new Date().getFullYear());
+    }
+    
+    return Array.from(years).sort((a, b) => b - a); // Sort descending
+  }
+
+  function filterDataByPeriod(data, period, month = '', year = '') {
+    const now = new Date();
+    const currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+    const currentYear = now.getFullYear().toString();
+
+    return data.filter(entry => {
+      const entryDate = getMonthYearFromDate(entry.date);
+      
+      switch(period) {
+        case 'monthly':
+          return entryDate.month === currentMonth && entryDate.year === currentYear;
+        case 'yearly':
+          return entryDate.year === currentYear;
+        case 'custom':
+          return entryDate.month === month && entryDate.year === year;
+        default:
+          return true; // 'all'
+      }
+    });
+  }
+
   function loadFuel(){
-    const data=JSON.parse(localStorage.getItem(FKEY)||'[]');
-    const tbody=document.querySelector('#fuelTbl tbody');
+    // Use vehicle-specific storage key
+    const fuelKey = currentVehicle && currentVehicle.id ? FKEY + '_' + currentVehicle.id : FKEY;
+    const allData = JSON.parse(localStorage.getItem(fuelKey)||'[]');
+    const filteredData = filterDataByPeriod(allData, currentFilter, currentMonth, currentYear);
+    const tbody = document.querySelector('#fuelTbl tbody');
     tbody.innerHTML='';
-    if(data.length<1)return;
-    for(let i=0;i<data.length;i++){
-      const e=data[i];
-      const prev=i>0?data[i-1]:null;
+    
+    if(filteredData.length<1){
+      document.getElementById('fuelNoData').style.display = 'block';
+      return 0;
+    } else {
+      document.getElementById('fuelNoData').style.display = 'none';
+    }
+
+    for(let i=0;i<filteredData.length;i++){
+      const e=filteredData[i];
+      const prev=i>0?filteredData[i-1]:null;
       const dval=prev?e.odo-prev.odo:0;
       const mil=(dval>0&&e.liters>0)?(dval/e.liters).toFixed(2):'—';
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${toDisplay(e.date)}</td><td>${e.liters}</td><td>₹${e.amount}</td><td>${e.odo}</td><td>${dval||'—'}</td><td>${mil}</td>`;
+      tr.innerHTML=`<td>${toDisplay(e.date)}</td><td>₹${e.liters}</td><td>₹${e.amount}</td><td>${e.odo}</td><td>${dval||'—'}</td><td>${mil}</td>`;
       tbody.appendChild(tr);
     }
+    return filteredData.reduce((sum, entry) => sum + parseFloat(entry.amount || 0), 0);
   }
 
   function loadService(){
-    const data=JSON.parse(localStorage.getItem(SKEY)||'[]');
-    const tbody=document.querySelector('#srvTbl tbody');
+    // Use vehicle-specific storage key
+    const serviceKey = currentVehicle && currentVehicle.id ? SKEY + '_' + currentVehicle.id : SKEY;
+    const allData = JSON.parse(localStorage.getItem(serviceKey)||'[]');
+    const filteredData = filterDataByPeriod(allData, currentFilter, currentMonth, currentYear);
+    const tbody = document.querySelector('#srvTbl tbody');
     tbody.innerHTML='';
-    data.forEach(e=>{
+    
+    if(filteredData.length<1){
+      document.getElementById('serviceNoData').style.display = 'block';
+      return 0;
+    } else {
+      document.getElementById('serviceNoData').style.display = 'none';
+    }
+
+    filteredData.forEach(e=>{
       const tr=document.createElement('tr');
       tr.innerHTML=`<td>${toDisplay(e.date)}</td><td>${e.place||'—'}</td><td>₹${e.cost||'—'}</td><td>${e.note||'—'}</td>`;
       tbody.appendChild(tr);
     });
+    return filteredData.reduce((sum, entry) => sum + parseFloat(entry.cost || 0), 0);
+  }
+
+  function loadTollTax(){
+    // Use vehicle-specific storage key
+    const tollKey = currentVehicle && currentVehicle.id ? TKEY + '_' + currentVehicle.id : TKEY;
+    const allData = JSON.parse(localStorage.getItem(tollKey)||'[]');
+    const filteredData = filterDataByPeriod(allData, currentFilter, currentMonth, currentYear);
+    const tbody = document.querySelector('#tollTbl tbody');
+    tbody.innerHTML='';
+    
+    if(filteredData.length<1){
+      document.getElementById('tollNoData').style.display = 'block';
+      return 0;
+    } else {
+      document.getElementById('tollNoData').style.display = 'none';
+    }
+
+    filteredData.forEach(e=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${toDisplay(e.date)}</td><td>${e.plaza||'—'}</td><td>₹${e.amount||'—'}</td><td>${e.vehicleType||'—'}</td><td>${e.route||'—'}</td>`;
+      tbody.appendChild(tr);
+    });
+    return filteredData.reduce((sum, entry) => sum + parseFloat(entry.amount || 0), 0);
+  }
+
+  function calculateSummary(){
+    const totalFuel = loadFuel();
+    const totalService = loadService();
+    const totalToll = loadTollTax();
+    const totalExpenses = totalFuel + totalService + totalToll;
+
+    document.getElementById('totalFuel').textContent = `₹${totalFuel.toFixed(2)}`;
+    document.getElementById('totalService').textContent = `₹${totalService.toFixed(2)}`;
+    document.getElementById('totalToll').textContent = `₹${totalToll.toFixed(2)}`;
+    document.getElementById('totalExpenses').textContent = `₹${totalExpenses.toFixed(2)}`;
+  }
+
+  function applyFilter() {
+    const reportType = document.getElementById('reportType').value;
+    currentFilter = reportType;
+    
+    if (reportType === 'custom') {
+      currentMonth = document.getElementById('customMonth').value;
+      currentYear = document.getElementById('customYear').value;
+    } else {
+      currentMonth = '';
+      currentYear = '';
+    }
+    
+    updatePeriodInfo();
+    calculateSummary();
+  }
+
+  function resetFilter() {
+    document.getElementById('reportType').value = 'all';
+    document.getElementById('customMonth').style.display = 'none';
+    document.getElementById('customYear').style.display = 'none';
+    currentFilter = 'all';
+    currentMonth = '';
+    currentYear = '';
+    updatePeriodInfo();
+    calculateSummary();
+  }
+
+  function updatePeriodInfo() {
+    const periodInfo = document.getElementById('periodInfo');
+    const now = new Date();
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    
+    let infoText = '';
+    switch(currentFilter) {
+      case 'monthly':
+        infoText = `Showing data for: ${months[now.getMonth()]} ${now.getFullYear()}`;
+        break;
+      case 'yearly':
+        infoText = `Showing data for year: ${now.getFullYear()}`;
+        break;
+      case 'custom':
+        const monthName = months[parseInt(currentMonth) - 1];
+        infoText = `Showing data for: ${monthName} ${currentYear}`;
+        break;
+      default:
+        infoText = 'Showing all data';
+    }
+    
+    periodInfo.textContent = infoText;
+  }
+
+  function populateYearDropdown() {
+    const yearSelect = document.getElementById('customYear');
+    const availableYears = getAllAvailableYears();
+    
+    yearSelect.innerHTML = '';
+    availableYears.forEach(year => {
+      const option = document.createElement('option');
+      option.value = year;
+      option.textContent = year;
+      yearSelect.appendChild(option);
+    });
+    
+    // Set current year as default
+    const currentYear = new Date().getFullYear();
+    if (availableYears.includes(currentYear)) {
+      yearSelect.value = currentYear;
+    } else if (availableYears.length > 0) {
+      yearSelect.value = availableYears[0]; // Set to most recent year with data
+    }
+  }
+
+  function setupFilterControls() {
+    const reportType = document.getElementById('reportType');
+    const customMonth = document.getElementById('customMonth');
+    const customYear = document.getElementById('customYear');
+    
+    reportType.addEventListener('change', function() {
+      if (this.value === 'custom') {
+        customMonth.style.display = 'inline-block';
+        customYear.style.display = 'inline-block';
+        // Update years dropdown when custom is selected
+        populateYearDropdown();
+      } else {
+        customMonth.style.display = 'none';
+        customYear.style.display = 'none';
+      }
+    });
+    
+    // Initial population
+    populateYearDropdown();
   }
 
   function exportCSV(){
-    let csv='Fuel Report\nDate,Liters,Amount,Odo,Dist,Mileage\n';
-    const fuel=JSON.parse(localStorage.getItem(FKEY)||'[]');
-    for(let i=1;i<fuel.length;i++){
-      const a=fuel[i-1],b=fuel[i];
+    // Use vehicle-specific storage keys
+    const fuelKey = currentVehicle && currentVehicle.id ? FKEY + '_' + currentVehicle.id : FKEY;
+    const serviceKey = currentVehicle && currentVehicle.id ? SKEY + '_' + currentVehicle.id : SKEY;
+    const tollKey = currentVehicle && currentVehicle.id ? TKEY + '_' + currentVehicle.id : TKEY;
+    
+    const allFuel = JSON.parse(localStorage.getItem(fuelKey)||'[]');
+    const allService = JSON.parse(localStorage.getItem(serviceKey)||'[]');
+    const allToll = JSON.parse(localStorage.getItem(tollKey)||'[]');
+    
+    const filteredFuel = filterDataByPeriod(allFuel, currentFilter, currentMonth, currentYear);
+    const filteredService = filterDataByPeriod(allService, currentFilter, currentMonth, currentYear);
+    const filteredToll = filterDataByPeriod(allToll, currentFilter, currentMonth, currentYear);
+
+    let csv = `Vehicle Report - ${document.getElementById('periodInfo').textContent}\n\n`;
+    
+    csv+='Fuel Report\nDate,Price/Liter,Amount,Odometer,Distance,Mileage\n';
+    for(let i=1;i<filteredFuel.length;i++){
+      const a=filteredFuel[i-1],b=filteredFuel[i];
       const dist=(b.odo-a.odo).toFixed(2);
       const mil=(b.liters>0?(dist/b.liters).toFixed(2):'0.00');
       csv+=`${toDisplay(b.date)},${b.liters},${b.amount},${b.odo},${dist},${mil}\n`;
     }
+    
     csv+='\nService Report\nDate,Garage,Amount,Details\n';
-    const srv=JSON.parse(localStorage.getItem(SKEY)||'[]');
-    srv.forEach(s=>{
+    filteredService.forEach(s=>{
       csv+=`${toDisplay(s.date)},${s.place||''},${s.cost||''},${s.note||''}\n`;
     });
+
+    csv+='\nToll Tax Report\nDate,Toll Plaza,Amount,Vehicle Type,Route\n';
+    filteredToll.forEach(t=>{
+      csv+=`${toDisplay(t.date)},${t.plaza||''},${t.amount||''},${t.vehicleType||''},${t.route||''}\n`;
+    });
+
     const blob=new Blob([csv],{type:'text/csv'});
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
@@ -166,14 +592,10 @@
     URL.revokeObjectURL(url);
   }
 
-  function showCarName(){
-    const meta=JSON.parse(localStorage.getItem(MKEY)||'{}');
-    document.getElementById('carNameDisplay').textContent=meta.carName?`🚗 ${meta.carName}`:'🚗 Vehicle Report';
+  function goBack() { 
+    // Navigate back to vehicle details page
+    window.location.href = 'vehicle.html';
   }
-
-  loadFuel();
-  loadService();
-  showCarName();
 </script>
 </body>
 </html>
