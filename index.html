@@ -4,8 +4,15 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Fuel Tracker — Vehicle Manager</title>
+
+  <!-- ✅ PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffcc00">
+
+  <!-- ✅ App Icons for install -->
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link rel="manifest" href="manifest.json">
 
   <style>
     :root{
@@ -109,9 +116,7 @@
     .modal-content h3{text-align:center;color:var(--accent);margin-bottom:15px;}
     .modal-content label{display:block;font-size:0.9rem;color:#555;margin-top:8px;font-weight:600;}
     .modal-content input{width:100%;padding:10px;margin-top:4px;border-radius:8px;border:1px solid #b2dfdb;background:#e6ffe6;}
-    .modal-content button{width:100%;margin-top:12px;background:linear-gradient(90deg,var(--primary),var(--secondary));border:none;color:#fff;font-weight:600;padding:10px;border-
-
-radius:8px;cursor:pointer;}
+    .modal-content button{width:100%;margin-top:12px;background:linear-gradient(90deg,var(--primary),var(--secondary));border:none;color:#fff;font-weight:600;padding:10px;border-radius:8px;cursor:pointer;}
 
     /* Thanks Box Animation */
     #thanksBox{
@@ -219,6 +224,13 @@ radius:8px;cursor:pointer;}
         div.querySelector('.details-bar').onclick=(e)=>{e.stopPropagation();goToDetails(v);}
         container.appendChild(div);
       });
+    }
+
+    // ✅ Service Worker registration (PWA requirement)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js')
+      .then(() => console.log("✅ Service Worker Registered"))
+      .catch(err => console.log("SW Error:", err));
     }
 
     function openModal(id=null){
