@@ -1,5 +1,5 @@
-﻿<!doctype html>
-<html lang="bn">
+<!doctype html>
+<html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -9,6 +9,10 @@
     --bg1:#004d00;  /* deep green */
     --bg2:#800000;  /* deep red */
     --card:#fff8dc; /* light yellow */
+    --accent1:#ff6f00;
+    --accent2:#d32f2f;
+    --accent3:#388e3c;
+    --accent4:#1976d2;
   }
 
   *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Roboto,'Noto Sans',sans-serif}
@@ -25,7 +29,7 @@
 
   .card{
     width:100%;
-    max-width:580px;
+    max-width:680px;
     background:var(--card);
     border-radius:20px;
     padding:24px;
@@ -35,9 +39,9 @@
 
   .logo{
     display:block;
-    margin:0 auto 10px auto;
-    width:120px;
-    height:120px;
+    margin:0 auto 8px auto;
+    width:100px;
+    height:100px;
     border-radius:10px;
     object-fit:contain;
     background:#fff8dc;
@@ -48,7 +52,26 @@
   h1{
     text-align:center;
     color:#0b2545;
-    margin:0 0 10px 0;
+    margin:0 0 5px 0;
+    font-size:1.8rem;
+  }
+
+  .car-name {
+    text-align:center;
+    color: var(--accent4);
+    font-weight:700;
+    font-size:1.2rem;
+    margin:0 0 20px 0;
+    background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+    padding:8px 16px;
+    border-radius:25px;
+    display:inline-block;
+    border:2px solid #64b5f6;
+  }
+
+  .header-container {
+    text-align:center;
+    margin-bottom:20px;
   }
 
   label{
@@ -58,151 +81,535 @@
     color:#2c2c2c;
   }
 
+  .required::after {
+    content: " *";
+    color: var(--accent2);
+    font-weight:bold;
+  }
+
   input[type="text"], input[type="number"], input[type="date"]{
     width:100%;
-    padding:10px;
-    border-radius:10px;
-    border:1px solid #a6c9b9;
+    padding:12px;
+    border-radius:12px;
+    border:2px solid #ffb74d;
     margin-top:6px;
-    background:linear-gradient(90deg,#eaf5ff,#e8ffe8);
+    background:linear-gradient(135deg,#fffde7,#fff3e0);
+    font-size:1rem;
+    transition:all 0.3s ease;
+  }
+
+  input:focus {
+    outline:none;
+    border-color:var(--accent1);
+    box-shadow:0 0 10px rgba(255,111,0,0.3);
+    transform:scale(1.02);
   }
 
   /* 🔸 Add Entry Button Special Color */
-  .btn.add{
-    width:100%;
-    margin-top:14px;
-    padding:10px;
+  .btn{
     border:none;
-    border-radius:10px;
+    padding:14px 20px;
+    border-radius:12px;
     font-weight:700;
     cursor:pointer;
-    background:linear-gradient(90deg,#ff9966,#ff5e62);
-    color:#fff;
-    transition:0.25s;
-    box-shadow:0 4px 12px rgba(255,94,98,0.4);
+    transition:all 0.3s ease;
+    font-size:1rem;
+    margin:8px 4px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.2);
   }
-  .btn.add:hover{filter:brightness(1.1)}
+
+  .btn.add{
+    background:linear-gradient(135deg,var(--accent3),#2e7d32);
+    color:white;
+    width:100%;
+    margin-top:20px;
+  }
+
+  .btn.update{
+    background:linear-gradient(135deg,var(--accent4),#1565c0);
+    color:white;
+  }
+
+  .btn.edit{
+    background:linear-gradient(135deg,#ffa000,#ff6f00);
+    color:white;
+  }
+
+  .btn.delete{
+    background:linear-gradient(135deg,var(--accent2),#c62828);
+    color:white;
+  }
+
+  .btn.cancel{
+    background:linear-gradient(135deg,#ff9800,#f57c00);
+    color:white;
+    width:100%;
+    margin-top:8px;
+  }
+
+  .btn.back{
+    background:linear-gradient(135deg,#7b1fa2,#4a148c);
+    color:white;
+    width:100%;
+    margin-top:10px;
+  }
+
+  .btn:hover{
+    filter:brightness(1.1);
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(0,0,0,0.3);
+  }
+
+  .btn-small{
+    padding:6px 10px;
+    font-size:0.8rem;
+    border-radius:8px;
+  }
 
   table{
     width:100%;
     border-collapse:collapse;
     margin-top:20px;
     font-size:0.9rem;
+    background:white;
+    border-radius:12px;
+    overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
   }
 
   th, td{
     padding:10px;
     text-align:center;
-    border:1px solid #ddd;
+    border:1px solid #ffe0b2;
   }
 
   th{
-    background-color:#f4a9b8; /* light pink header */
+    background:linear-gradient(135deg,var(--accent1),#e65100);
     color:#fff;
+    font-weight:600;
   }
 
-  tr:nth-child(even){background-color:#eaf5ff;} /* sky blue */
-  tr:nth-child(odd){background-color:#ffeaf3;}  /* light pink */
+  tr:nth-child(even){background-color:#fff8e1;}
+  tr:nth-child(odd){background-color:#fff3e0;}
 
-  .btn.back{
-    width:100%;
-    margin-top:16px;
-    padding:10px;
-    border:none;
-    border-radius:10px;
-    font-weight:700;
-    cursor:pointer;
-    background:linear-gradient(90deg,#6ca0dc,#a2f2a2);
-    color:#00264d;
-    transition:0.25s;
+  tr:hover{
+    background:#ffe0b2;
+    transform:scale(1.01);
+    transition:all 0.2s ease;
   }
-  .btn.back:hover{filter:brightness(1.1)}
+
+  .action-buttons{
+    display:flex;
+    gap:6px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  .highlight{
+    background:linear-gradient(135deg,#fff9c4,#fff59d) !important;
+    border:2px solid #ffd600;
+  }
+
+  .summary-card{
+    background:linear-gradient(135deg,#e3f2fd,#bbdefb);
+    border-radius:12px;
+    padding:15px;
+    margin:15px 0;
+    border:2px solid #64b5f6;
+    box-shadow:0 4px 12px rgba(33,150,243,0.2);
+  }
+
+  .summary-item{
+    display:flex;
+    justify-content:space-between;
+    margin:8px 0;
+    font-weight:600;
+    font-size:1rem;
+  }
+
+  .total-cost{
+    border-top:2px solid #64b5f6;
+    padding-top:10px;
+    margin-top:12px;
+    font-size:1.1rem;
+    color:#d32f2f;
+  }
+
+  .no-data{
+    text-align:center;
+    color:#666;
+    font-style:italic;
+    padding:30px;
+    background:#fff3e0;
+    border-radius:12px;
+    margin:15px 0;
+    border:2px dashed #ffb74d;
+  }
+
+  @media (max-width:480px){
+    .card{padding:16px;}
+    .btn{padding:12px 16px;font-size:0.9rem;}
+    table{font-size:0.8rem;}
+    .action-buttons{flex-direction:column;}
+  }
 </style>
 </head>
 <body>
   <div class="card">
     <img src="FuelTracker.png" alt="Fuel Tracker Logo" class="logo">
-    <h1>⛽ Fuel Entry</h1>
+    
+    <div class="header-container">
+      <h1>⛽ Fuel Manager</h1>
+      <div class="car-name" id="carNameDisplay">🚗 Loading vehicle...</div>
+    </div>
 
-    <label>Date</label>
-    <input type="date" id="date">
+    <!-- Fuel Entry Form -->
+    <div class="form-group">
+      <label class="required">📅 Date</label>
+      <input type="date" id="date">
+    </div>
 
-    <label>Fuel/Liters (₹) আজকে তেলের দাম কতো ?</label>
-    <input type="number" id="liters" placeholder="₹ 105.19">
+    <div class="form-group">
+      <label class="required">⛽ Price per Liter (₹)</label>
+      <input type="number" id="pricePerLiter" placeholder="e.g., 105.19" step="0.01">
+    </div>
 
-    <label>Amount (₹) কতো টাকার তেল ভরছেন?</label>
-    <input type="number" id="amount" placeholder="₹ 251.00">
+    <div class="form-group">
+      <label class="required">💰 Amount (₹)</label>
+      <input type="number" id="amount" placeholder="e.g., 251.00" step="0.01">
+    </div>
 
-    <label>Odometer (km) (আপনার কতো কিলোমিটার রিডিং আছে?)</label>
-    <input type="number" id="odo" placeholder="e.g. 45800">
+    <div class="form-group">
+      <label class="required">📊 Odometer (km)</label>
+      <input type="number" id="odo" placeholder="e.g., 45800" step="0.1">
+    </div>
 
-    <!-- 🔸 Updated Add Entry Button -->
-    <button class="btn add" onclick="addEntry()">➕ Add Entry</button>
+    <button class="btn add" onclick="addOrUpdateEntry()" id="addUpdateBtn">➕ Add Fuel Entry</button>
+    <button class="btn cancel" onclick="cancelEdit()" id="cancelBtn" style="display:none;">❌ Cancel Edit</button>
 
+    <!-- Summary Section -->
+    <div class="summary-card">
+      <div class="summary-item">
+        <span>Total Fuel Entries:</span>
+        <span id="totalEntries">0</span>
+      </div>
+      <div class="summary-item">
+        <span>This Month:</span>
+        <span id="monthlyTotal">₹0</span>
+      </div>
+      <div class="summary-item">
+        <span>Average Mileage:</span>
+        <span id="avgMileage">0 km/L</span>
+      </div>
+      <div class="summary-item total-cost">
+        <span>Total Fuel Cost:</span>
+        <span id="totalAmount">₹0</span>
+      </div>
+    </div>
+
+    <!-- Fuel Entries Table -->
     <table id="fuelTable">
       <thead>
         <tr>
           <th>Date</th>
-          <th>Liters</th>
+          <th>Price/Liter</th>
           <th>Amount</th>
           <th>Odometer</th>
-          <th>Mileage (km/L)</th> <!-- ✅ নতুন কলাম -->
+          <th>Mileage</th>
+          <th>Actions</th>
         </tr>
       </thead>
-      <tbody></tbody>
+      <tbody id="fuelTbody"></tbody>
     </table>
 
-    <button class="btn back" onclick="go('index.html')">🏠 Back to Home</button>
+    <div id="noFuelData" class="no-data" style="display:none;">
+      ⛽ No fuel entries found!<br>
+      <small>Add your first fuel entry above to get started.</small>
+    </div>
+
+    <button class="btn back" onclick="goBack()">🏠 Back to Vehicle Details</button>
   </div>
 
 <script>
   const KEY_FUEL = 'fuel_entries_v1';
+  let fuelEntries = [];
+  let editingIndex = -1;
+  let currentVehicle = null;
 
-  // ✅ পেজ লোডের সময় আজকের তারিখ দেখাবে
+  // Initialize with today's date
   document.addEventListener("DOMContentLoaded", () => {
     const today = new Date().toISOString().split("T")[0];
     document.getElementById("date").value = today;
+    
+    // Get current vehicle data - try multiple storage locations
+    currentVehicle = JSON.parse(localStorage.getItem('currentVehicle') || '{}');
+    
+    // If no vehicle found in currentVehicle, try to get from vehicles list
+    if (!currentVehicle || !currentVehicle.id) {
+      const vehicles = JSON.parse(localStorage.getItem('fuelTracker_vehicles') || '[]');
+      const currentVehicleId = localStorage.getItem('currentVehicleId');
+      if (currentVehicleId && vehicles.length > 0) {
+        currentVehicle = vehicles.find(v => v.id == currentVehicleId) || {};
+      }
+    }
+    
+    showCarName();
+    loadEntries();
+    updateSummary();
   });
 
+  function showCarName() {
+    const carNameDisplay = document.getElementById('carNameDisplay');
+    
+    if (currentVehicle && currentVehicle.type && currentVehicle.model) {
+      let vehicleName = `${currentVehicle.type}: ${currentVehicle.model}`;
+      if (currentVehicle.number && currentVehicle.number.trim() !== '') {
+        vehicleName += ` (${currentVehicle.number})`;
+      }
+      carNameDisplay.textContent = `🚗 ${vehicleName}`;
+      carNameDisplay.style.background = 'linear-gradient(135deg,#e3f2fd,#bbdefb)';
+      carNameDisplay.style.borderColor = '#64b5f6';
+      
+      // Update page title with vehicle info
+      document.title = `Fuel Entry - ${currentVehicle.type}: ${currentVehicle.model}`;
+    } else {
+      carNameDisplay.textContent = '🚗 No Vehicle Selected';
+      carNameDisplay.style.background = 'linear-gradient(135deg,#ffcdd2,#ef9a9a)';
+      carNameDisplay.style.borderColor = '#f44336';
+      document.title = 'Fuel Entry - No Vehicle Selected';
+    }
+  }
+
   function loadEntries(){
-    const arr = JSON.parse(localStorage.getItem(KEY_FUEL) || '[]');
-    const tbody = document.querySelector('#fuelTable tbody');
+    // Use vehicle-specific storage key
+    const vehicleKey = currentVehicle && currentVehicle.id ? 
+        KEY_FUEL + '_' + currentVehicle.id : KEY_FUEL;
+        
+    fuelEntries = JSON.parse(localStorage.getItem(vehicleKey) || '[]');
+    
+    const tbody = document.getElementById('fuelTbody');
+    const noData = document.getElementById('noFuelData');
+    
     tbody.innerHTML = '';
-    arr.forEach((row, i)=>{
+    
+    if(fuelEntries.length === 0){
+      document.getElementById('fuelTable').style.display = 'none';
+      noData.style.display = 'block';
+      return;
+    } else {
+      document.getElementById('fuelTable').style.display = 'table';
+      noData.style.display = 'none';
+    }
+
+    // Sort by date (newest first)
+    fuelEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    fuelEntries.forEach((row, i)=>{
       let mileage = '-';
       if(i > 0){
-        const prev = arr[i-1];
+        const prev = fuelEntries[i-1];
         const dist = row.odo - prev.odo;
-        const fuel = row.liters;
-        mileage = fuel > 0 ? (dist / fuel).toFixed(2) : '-';
+        const fuel = row.amount / row.pricePerLiter; // Calculate actual fuel quantity
+        mileage = fuel > 0 ? (dist / fuel).toFixed(2) + ' km/L' : '-';
       }
+      
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${row.date}</td><td>${row.liters}</td><td>${row.amount}</td><td>${row.odo}</td><td>${mileage}</td>`;
+      if(i === editingIndex){
+        tr.classList.add('highlight');
+      }
+      
+      tr.innerHTML = `
+        <td>${formatDate(row.date)}</td>
+        <td>₹${row.pricePerLiter}</td>
+        <td style="font-weight:bold;color:#d32f2f;">₹${row.amount}</td>
+        <td>${row.odo} km</td>
+        <td>${mileage}</td>
+        <td>
+          <div class="action-buttons">
+            <button class="btn edit btn-small" onclick="editEntry(${i})">✏️ Edit</button>
+            <button class="btn delete btn-small" onclick="deleteEntry(${i})">🗑️ Delete</button>
+          </div>
+        </td>
+      `;
       tbody.appendChild(tr);
     });
   }
 
-  function addEntry(){
+  function formatDate(dateStr){
+    const date = new Date(dateStr);
+    return `${String(date.getDate()).padStart(2,'0')}-${String(date.getMonth()+1).padStart(2,'0')}-${date.getFullYear()}`;
+  }
+
+  function addOrUpdateEntry(){
     const date = document.getElementById('date').value;
-    const liters = parseFloat(document.getElementById('liters').value);
+    const pricePerLiter = parseFloat(document.getElementById('pricePerLiter').value);
     const amount = parseFloat(document.getElementById('amount').value);
     const odo = parseFloat(document.getElementById('odo').value);
 
-    if(!date || isNaN(liters) || isNaN(amount) || isNaN(odo)){
-      alert("দয়া করে সব ঘর পূরণ করুন!");
+    if(!date || isNaN(pricePerLiter) || isNaN(amount) || isNaN(odo)){
+      alert("Please fill all required fields!");
       return;
     }
 
-    const arr = JSON.parse(localStorage.getItem(KEY_FUEL) || '[]');
-    arr.push({date, liters, amount, odo});
-    localStorage.setItem(KEY_FUEL, JSON.stringify(arr));
+    const fuelEntry = {
+      date,
+      pricePerLiter,
+      amount,
+      odo
+    };
+
+    if(editingIndex === -1){
+      // Add new entry
+      fuelEntries.push(fuelEntry);
+      showMessage('✅ Fuel entry added successfully!', 'success');
+    } else {
+      // Update existing entry
+      fuelEntries[editingIndex] = fuelEntry;
+      showMessage('✅ Fuel entry updated successfully!', 'success');
+      cancelEdit();
+    }
+
+    // Save to vehicle-specific storage
+    const vehicleKey = currentVehicle && currentVehicle.id ? 
+        KEY_FUEL + '_' + currentVehicle.id : KEY_FUEL;
+    localStorage.setItem(vehicleKey, JSON.stringify(fuelEntries));
+    
     loadEntries();
-    alert("নতুন তথ্য যুক্ত হয়েছে!");
+    updateSummary();
+    clearForm();
   }
 
-  function go(page){ location.href = page; }
+  function editEntry(index){
+    const entry = fuelEntries[index];
+    document.getElementById('date').value = entry.date;
+    document.getElementById('pricePerLiter').value = entry.pricePerLiter;
+    document.getElementById('amount').value = entry.amount;
+    document.getElementById('odo').value = entry.odo;
+    
+    editingIndex = index;
+    document.getElementById('addUpdateBtn').textContent = '💾 Update Entry';
+    document.getElementById('addUpdateBtn').style.background = 'linear-gradient(135deg, #1976d2, #1565c0)';
+    document.getElementById('cancelBtn').style.display = 'block';
+    
+    loadEntries(); // Refresh to highlight the editing row
+  }
 
-  loadEntries();
+  function deleteEntry(index){
+    if(confirm("Are you sure you want to delete this fuel entry?")){
+      fuelEntries.splice(index, 1);
+      
+      // Save to vehicle-specific storage
+      const vehicleKey = currentVehicle && currentVehicle.id ? 
+          KEY_FUEL + '_' + currentVehicle.id : KEY_FUEL;
+      localStorage.setItem(vehicleKey, JSON.stringify(fuelEntries));
+      
+      if(editingIndex === index){
+        cancelEdit();
+      }
+      
+      loadEntries();
+      updateSummary();
+      showMessage('🗑️ Fuel entry deleted successfully!', 'info');
+    }
+  }
+
+  function cancelEdit(){
+    editingIndex = -1;
+    document.getElementById('addUpdateBtn').textContent = '➕ Add Fuel Entry';
+    document.getElementById('addUpdateBtn').style.background = 'linear-gradient(135deg, #388e3c, #2e7d32)';
+    document.getElementById('cancelBtn').style.display = 'none';
+    clearForm();
+    loadEntries(); // Refresh to remove highlight
+  }
+
+  function clearForm(){
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById('date').value = today;
+    document.getElementById('pricePerLiter').value = '';
+    document.getElementById('amount').value = '';
+    document.getElementById('odo').value = '';
+  }
+
+  function updateSummary(){
+    const totalEntries = fuelEntries.length;
+    const totalAmount = fuelEntries.reduce((sum, entry) => sum + parseFloat(entry.amount || 0), 0);
+    
+    // Calculate monthly total
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const monthlyTotal = fuelEntries.reduce((sum, entry) => {
+      const entryDate = new Date(entry.date);
+      if(entryDate.getMonth() === currentMonth && entryDate.getFullYear() === currentYear){
+        return sum + parseFloat(entry.amount || 0);
+      }
+      return sum;
+    }, 0);
+    
+    // Calculate average mileage
+    let totalMileage = 0;
+    let mileageCount = 0;
+    for(let i = 1; i < fuelEntries.length; i++){
+      const prev = fuelEntries[i-1];
+      const curr = fuelEntries[i];
+      const dist = curr.odo - prev.odo;
+      const fuel = curr.amount / curr.pricePerLiter;
+      if(fuel > 0 && dist > 0){
+        totalMileage += (dist / fuel);
+        mileageCount++;
+      }
+    }
+    const avgMileage = mileageCount > 0 ? (totalMileage / mileageCount).toFixed(2) : 0;
+    
+    document.getElementById('totalEntries').textContent = totalEntries;
+    document.getElementById('monthlyTotal').textContent = `₹${monthlyTotal.toFixed(2)}`;
+    document.getElementById('avgMileage').textContent = `${avgMileage} km/L`;
+    document.getElementById('totalAmount').textContent = `₹${totalAmount.toFixed(2)}`;
+  }
+
+  function showMessage(message, type){
+    const msg = document.createElement('div');
+    msg.textContent = message;
+    msg.style.cssText = `
+      position:fixed;
+      top:20px;
+      left:50%;
+      transform:translateX(-50%);
+      background:${type === 'success' ? '#4caf50' : '#2196f3'};
+      color:white;
+      padding:12px 24px;
+      border-radius:8px;
+      font-weight:600;
+      box-shadow:0 4px 12px rgba(0,0,0,0.3);
+      z-index:1000;
+      animation:slideDown 0.3s ease;
+    `;
+    
+    document.body.appendChild(msg);
+    
+    setTimeout(() => {
+      msg.style.animation = 'slideUp 0.3s ease';
+      setTimeout(() => msg.remove(), 300);
+    }, 3000);
+  }
+
+  function goBack(){ 
+    // Navigate back to vehicle details page
+    window.location.href = 'vehicle.html';
+  }
+
+  // Add CSS for message animations
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes slideDown {
+      from { top: -50px; opacity: 0; }
+      to { top: 20px; opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { top: 20px; opacity: 1; }
+      to { top: -50px; opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
 </script>
 </body>
 </html>
